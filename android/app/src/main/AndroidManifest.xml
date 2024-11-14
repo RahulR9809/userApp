@@ -1,17 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/> 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Add if needed -->
 
     <application
         android:label="rideuser"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:enableOnBackInvokedCallback="true">  <!-- Add this line -->
-        
+        android:enableOnBackInvokedCallback="true">
+
+        <!-- Flutter theme and launch activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
@@ -27,18 +33,16 @@
             </intent-filter>
         </activity>
 
+<meta-data
+    android:name="com.mapbox.AccessToken"
+    android:value="sk.eyJ1IjoicmFodWw5ODA5IiwiYSI6ImNtM2VhNXh3aTBhOTkybXM4N3UzNjkwMnMifQ.posHRt265ZdEME7ls01YbA"/>
         <!-- Meta-data for Google Sign-In -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-            
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_GOOGLE_MAPS_API_KEY_HERE" />
 
-        <meta-data
-            android:name="com.google.android.gms.wallet.api.enabled"
-            android:value="true" />
+        <!-- Mapbox Telemetry Receiver Export -->
+        <receiver android:name="com.mapbox.android.telemetry.MapboxReceiver" android:exported="true"/>
 
         <!-- Flutter plugin metadata -->
         <meta-data

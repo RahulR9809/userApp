@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+  <key>MBXAccessToken</key>
+    <string>sk.eyJ1IjoicmFodWw5ODA5IiwiYSI6ImNtMzkzM3N1ODB0d2Qya3M1eDJqdDZuZjkifQ.k4ob8fCA2r0a5jw8HQx7vA</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -45,5 +47,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	 <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need your location to show your current position on the map.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>This app needs access to your location to provide map features.</string>
 </dict>
 </plist>

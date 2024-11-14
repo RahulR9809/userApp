@@ -53,6 +53,10 @@ android {
     }
 }
 
+dependencies {
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.1'  // Latest version
+}
+
 flutter {
     source = "../.."
 }

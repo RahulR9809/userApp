@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:rideuser/StartRidepage/ride.dart';
-import 'package:rideuser/widgets/auth_widgets.dart';
 
 
 class StartRide extends StatelessWidget {
@@ -45,7 +44,7 @@ class StartRide extends StatelessWidget {
             // Go Ride Button
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const RidePage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> RidePage()));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green, // Set button color
