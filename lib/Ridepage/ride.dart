@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
-import 'package:rideuser/StartRidepage/ride.dart';
+import 'package:rideuser/Ridepage/request_ride.dart';
 
 
 class StartRide extends StatelessWidget {
@@ -44,7 +44,7 @@ class StartRide extends StatelessWidget {
             // Go Ride Button
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=> RidePage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>  RidePage()));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green, // Set button color

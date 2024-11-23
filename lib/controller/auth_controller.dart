@@ -80,6 +80,8 @@ class AuthService {
       final String emailtoken = data?['accessToken'];
         userdata = data['data'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
+               await prefs.setString('userid', userdata?['id']);
+
               await prefs.setString('name', userdata?['name']);
         await prefs.setString('email', userdata?['email']);
       await prefs.setString('emailtoken', emailtoken);

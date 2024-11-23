@@ -48,8 +48,7 @@ class _OtpPageState extends State<OtpPage> {
         fourthDigitController.text;
 
     if (otp.length == 4 && otp.runes.every((c) => c >= 48 && c <= 57)) {
-      // If OTP has 4 digits and each is a number, proceed with submission
-      BlocProvider.of<AuthBloc>(context).add(SubmitOTPEvent(otp: otp));
+    BlocProvider.of<AuthBloc>(context).add(SubmitOTPEvent(otp: otp));
     } else {
       // Show error message if fields are incomplete or not numbers
       ScaffoldMessenger.of(context).showSnackBar(
@@ -191,7 +190,7 @@ class _OtpPageState extends State<OtpPage> {
           ),
           filled: true,
           fillColor: Colors.purple.withOpacity(0.2),
-          hintText: '•',
+          hintText: '',
           hintStyle:
               TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 20),
         ),

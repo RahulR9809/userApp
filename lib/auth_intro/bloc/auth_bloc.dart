@@ -26,20 +26,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
 
-  on<SubmitOTPEvent>((event, emit) async {
+on<SubmitOTPEvent>((event, emit) async {
   emit(LoginLoading());
+  print('Verifying OTP: ${event.otp}'); // Log entered OTP
   try {
     final token = await authService.verifyOtp(event.otp);
+    print('Verification Response: $token'); // Log response from backend
 
     if (token != null) {
-      emit(EmailAuthenticatedState()); 
+      emit(EmailAuthenticatedState());
     } else {
       emit(EmailUnAuthenticatedState());
     }
   } catch (e) {
+    print('Verification Error: ${e.toString()}'); // Log any errors
     emit(ErrorState(message: 'Failed verifying OTP: ${e.toString()}'));
   }
 });
+
 
 on<SigninClickedEvent>((event, emit) async {
   emit(LoginLoading());

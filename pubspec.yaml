@@ -66,7 +66,8 @@ flutter:
     - assets/google.png
     - assets/Man track taxi driver cab on tablet map.jpg
     - assets/email.jpg
-    - assets/icon.png
+    - assets/vehicleLocation.png
+    - assets/liveLocation.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

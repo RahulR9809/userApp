@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rideuser/customBottomNav/bloc/bottom_nav_bloc.dart';
 import 'package:rideuser/customBottomNav/nav_page.dart';
 import 'package:rideuser/home/homepage.dart';
-import 'package:rideuser/StartRidepage/start-ride.dart';
+import 'package:rideuser/Ridepage/ride.dart';
 import 'package:rideuser/profilepage/profile.dart';
 
 class MainPage extends StatefulWidget {
