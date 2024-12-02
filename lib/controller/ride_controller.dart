@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+final userurl='192.168.1.35';
+
 class RideService {
 
 
-final String baseUrl = "http://10.0.2.2:3001/api/trip/users/nearby-drivers"; 
+final String baseUrl = "http://$userurl:3001/api/trip/users/nearby-drivers"; 
 
 Future<List<Map<String, dynamic>>> getNearByDrivers({
   required String userId,
@@ -13,7 +15,7 @@ Future<List<Map<String, dynamic>>> getNearByDrivers({
   required double pickupLongitude,
   required double dropLatitude,
   required double dropLongitude,
-  required String accessToken,
+  required String accessToken, String? vehicleType,
 }) async {
   try {
     final url = Uri.parse(
@@ -65,7 +67,7 @@ print(data);
 }
 
 
-final String apiUrl = 'http://10.0.2.2:3001/api/trip/users/request-ride';
+final String apiUrl = 'http://$userurl:3001/api/trip/users/request-ride';
 
 Future<Map<String, dynamic>> createRideRequest({
   required String userId,
@@ -135,5 +137,59 @@ Future<Map<String, dynamic>> createRideRequest({
     throw Exception('Error occurred: $error');
   }
 }
+Future<List<String>> fetchPickupLocation(String search) async {
+  // Fetch the access token from SharedPreferences
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? accessToken = prefs.getString('emailtoken') ?? prefs.getString('googletoken');
+
+  if (accessToken == null) {
+    throw Exception('Access token is missing');
+  }
+
+  // API URL
+  final url = Uri.parse(
+      'http://$userurl:3001/api/trip/users/pickup-location-autocomplete?search=$search');
+
+  try {
+    // Send GET request with Authorization header
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    // Check the response status code
+    if (response.statusCode == 201) {
+      final data = json.decode(response.body);
+
+      // Debugging: Log the response structure
+      print('Response data: $data');
+
+      // Check if the key `searchResults` exists and is a list
+      if (data is Map<String, dynamic> &&
+          data.containsKey('searchResults') &&
+          data['searchResults'] is List) {
+        // Extracting the 'full_address' or 'name' from each entry in 'searchResults'
+        List<String> suggestions = [];
+        for (var result in data['searchResults']) {
+          if (result['properties'] != null) {
+            // Add either 'full_address' or 'name' depending on which you prefer
+            suggestions.add(result['properties']['full_address'] ?? result['properties']['name']);
+          }
+        }
+        return suggestions;
+      } else {
+        throw Exception(
+            'Unexpected response format: "searchResults" key missing or invalid');
+      }
+    } else {
+      throw Exception('Failed to fetch suggestions: ${response.statusCode}');
+    }
+  } catch (error) {
+    throw Exception('An error occurred: $error');
+  }
+}
+
 
 }

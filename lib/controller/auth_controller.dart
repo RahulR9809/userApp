@@ -5,11 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final userurl='192.168.1.35';
+
+
 Map<String, dynamic>? userdata;
-
 class AuthService {
-  String baseUrl = "http://10.0.2.2:3001/api/auth/user/login/email";
-
   Future<String?> getGoogleToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('googletoken');
@@ -30,6 +30,7 @@ class AuthService {
     return prefs.getString('session_cookie');
   }
 
+  String baseUrl = "http://$userurl:3001/api/auth/user/login/email";
   Future<String?> getOTP(String email) async {
     final url = Uri.parse(baseUrl);
 
@@ -60,7 +61,7 @@ class AuthService {
     }
   }
 
-  final verifyurl = 'http://10.0.2.2:3001/api/auth/user/verify-otp';
+  final verifyurl = 'http://$userurl:3001/api/auth/user/verify-otp';
   Future<String?> verifyOtp(String otp) async {
     final url = Uri.parse(verifyurl);
 
@@ -99,7 +100,7 @@ class AuthService {
   }
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
-  final googlebaseUrl = 'http://10.0.2.2:3001/api/auth/user/login/google';
+  final googlebaseUrl = 'http://$userurl:3001/api/auth/user/login/google';
 
   Future<String?> signInWithGoogle() async {
     try {

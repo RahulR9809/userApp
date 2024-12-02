@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rideuser/Ridepage/bloc/ride_bloc.dart';
+import 'package:rideuser/controller/user_socket.dart';
 import 'package:rideuser/customBottomNav/bloc/bottom_nav_bloc.dart';
 import 'package:rideuser/mainpage/mainpage.dart';
 import 'package:rideuser/profilepage/bloc/profile_bloc.dart';
@@ -12,6 +14,17 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   runApp(const MyApp());
+
+
+    final userSocketService = UserSocketService();
+
+  // Connect the user
+  userSocketService.connect("USER_123");
+
+  // Disconnect after 10 seconds for testing
+  Future.delayed(Duration(seconds: 10), () {
+    userSocketService.disconnect();
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -35,6 +48,8 @@ class MyApp extends StatelessWidget {
           
         ),
         BlocProvider(create: (context) => OtpBloc(authService: authService)),
+          BlocProvider(create: (context) => RideBloc()),
+
       ],
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) async {

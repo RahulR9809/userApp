@@ -55,16 +55,16 @@ Widget authbutton(
       minimumSize: const Size(double.infinity, 50),
     ),
     child: Row(
-      mainAxisSize: MainAxisSize.min, // Adjust the size to wrap content
+      mainAxisSize: MainAxisSize.min, 
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (imagePath != null) // Only show the image if provided
+        if (imagePath != null) 
           Padding(
             padding: const EdgeInsets.only(
-                right: 8.0), // Add space between image and text
+                right: 8.0),
             child: Image.asset(
               imagePath,
-              width: 24, // Small size for the image
+              width: 24, 
               height: 24,
             ),
           ),
@@ -78,8 +78,8 @@ Widget authbutton(
 }
 
 class ReusableButton extends StatelessWidget {
-  final String text; // Text to display on the button
-  final VoidCallback onPressed; // Callback function when the button is pressed
+  final String text; 
+  final VoidCallback onPressed; 
 
   const ReusableButton({
     super.key,

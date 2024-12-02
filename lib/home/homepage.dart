@@ -1,5 +1,3 @@
-// ignore_for_file: file_names
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -9,10 +7,18 @@ class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFF212121), // Charcoal Gray Background
       appBar: AppBar(
-        title: const Text('Dashboard'),
-        backgroundColor: Colors.blueAccent,
+        title: const Text(
+          'Dashboard',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF6A1B9A), // Royal Purple for AppBar
+        elevation: 4,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -34,6 +40,8 @@ class Homepage extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                color: Colors.white,
+                elevation: 6,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -44,6 +52,7 @@ class Homepage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: Color(0xFF6A1B9A), // Royal Purple for header
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -66,19 +75,19 @@ class Homepage extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         color: Colors.white,
-        elevation: 4,
+        elevation: 6,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
           child: Column(
             children: [
-              Icon(icon, size: 40, color: Colors.blueAccent),
+              Icon(icon, size: 40, color: const Color(0xFF6A1B9A)), // Royal Purple icon
               const SizedBox(height: 10),
               Text(
                 title,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey,
+                  color: Colors.grey, // Subtle gray for title
                 ),
               ),
               const SizedBox(height: 5),
@@ -122,7 +131,7 @@ class Homepage extends StatelessWidget {
               const FlSpot(6, 10),
             ],
             isCurved: true,
-            color: Colors.blueAccent,
+            color: const Color(0xFF6A1B9A), // Royal Purple for chart line
             barWidth: 4,
             dotData: const FlDotData(show: false),
           ),

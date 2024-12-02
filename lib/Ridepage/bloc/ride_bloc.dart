@@ -1,16 +1,224 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
-import 'package:rideuser/controller/ride_controller.dart';
 
-part 'ride_event.dart';
-part 'ride_state.dart';
+// Ride BLoC Implementation
+import 'dart:math';
+
+import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:rideuser/Ridepage/bloc/ride_event.dart';
+import 'package:rideuser/Ridepage/bloc/ride_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:rideuser/controller/ride_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RideBloc extends Bloc<RideEvent, RideState> {
-  RideBloc() : super(RideInitial()) {
+    final RideService _rideService = RideService();
 
-  //  on<RequestedRideEvent>((event, emit) async{
-  //    emit(RideLoadingState());
-  //    final data=await RideService.createRideRequest(userId: '', fare: null)
-  //  },);
+  RideBloc() : super(RideInitial()) {
+    on<FetchCurrentLocation>(_onFetchCurrentLocation);
+     on<FetchSuggestions>(_onFetchSuggestions);
+    on<SelectSuggestion>(_onSelectSuggestion);
+        on<FetchNearbyDrivers>(_onFetchNearbyDrivers);
+
+
+          on<CalculateRideDistance>(_onCalculateRideDistance);
+    on<CalculateFare>(_onCalculateFare);
+    on<RequestRide>(_onRequestRide);
+
+  }
+
+  Future<void> _onFetchCurrentLocation(
+      FetchCurrentLocation event, Emitter<RideState> emit) async {
+    emit(LocationLoading());
+
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Location services are disabled.');
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Location permission denied.');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception(
+            'Location permissions are permanently denied. Please enable them in settings.');
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.bestForNavigation,
+      );
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        String address =
+            "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
+
+        emit(LocationLoaded(
+          latitude: position.latitude,
+          longitude: position.longitude,
+          address: address,
+        ));
+      } else {
+        SnackBar(content: Text('Turn on Location'));
+      }
+    } catch (e) {
+      emit(LocationError('Error fetching location: $e'));
+    }
+  }
+
+
+
+Future<void> _onFetchSuggestions(
+    FetchSuggestions event, Emitter<RideState> emit) async {
+  emit(SuggestionsLoading());  // Emit loading state first
+  try {
+    final suggestions = await RideService().fetchPickupLocation(event.query); // Ensure this is fetching the suggestions
+    emit(SuggestionsLoaded(suggestions));  // Emit suggestions loaded state with data
+  } catch (e) {
+    emit(DestinationError('Failed to fetch suggestions: $e'));  // Handle errors gracefully
   }
 }
+
+
+
+Future<void> _onSelectSuggestion(
+    SelectSuggestion event, Emitter<RideState> emit) async {
+
+    try {
+      final locations = await locationFromAddress(event.address).timeout(
+        const Duration(seconds: 5),
+      );
+      if (locations.isNotEmpty) {
+        final location = locations.first;
+        emit(AddressSelected(
+          location.latitude,
+          location.longitude,
+          event.address,
+        ));
+        return;  // Success, exit the loop
+      } else {
+        throw Exception('No location found');
+      }
+    } catch (e) {
+   
+        return;
+      }
+    }
+  
+
+
+  void _onFetchNearbyDrivers(
+    FetchNearbyDrivers event, Emitter<RideState> emit) async {
+  emit(NearbyDriversLoading());
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+      final id=  prefs.getString('userid');
+      final token=prefs.getString('googletoken');
+  try {
+    final drivers = await RideService().getNearByDrivers(
+      userId: id!, 
+      pickupLatitude: event.latitude,
+      pickupLongitude: event.longitude,
+      dropLatitude: event.latitude, // Example, replace as needed
+      dropLongitude: event.longitude, // Example, replace as needed
+      vehicleType: event.vehicleType,
+      accessToken: token!, // Replace with your logic
+    );
+
+    emit(NearbyDriversLoaded(drivers));
+  } catch (e) {
+    emit(NearbyDriversError('Error fetching nearby drivers: $e'));
+  }
+}
+
+
+
+
+// Handle distance calculation
+  void _onCalculateRideDistance(
+    CalculateRideDistance event,
+    Emitter<RideState> emit,
+  ) {
+    double distance = _calculateDistance(
+      event.startLatitude,
+      event.startLongitude,
+      event.endLatitude,
+      event.endLongitude,
+    );
+    emit(RideDistanceCalculated(distance));
+  }
+
+  // Handle fare calculation
+  void _onCalculateFare(CalculateFare event, Emitter<RideState> emit) {
+    double fare = _calculateFare(event.distanceInKm);
+    emit(RideFareCalculated(fare));
+  }
+
+  // Handle requesting a ride
+  void _onRequestRide(RequestRide event, Emitter<RideState> emit) async {
+    try {
+      emit(RideLoading()); // Indicate loading state
+
+      // Call the service to create the ride request
+      final response = await _rideService.createRideRequest(
+        userId: event.userId,
+        fare: event.fare,
+        distance: event.distance,
+        duration: event.duration,
+        pickUpCoords: event.pickUpCoords,
+        dropCoords: event.dropCoords,
+        vehicleType: event.vehicleType,
+        pickupLocation: event.pickupLocation,
+        dropLocation: event.dropLocation,
+        paymentMethod: event.paymentMethod,
+      );
+
+      if (response.isNotEmpty) {
+        emit(RideRequested('Ride requested successfully!'));
+      } else {
+        emit(RideRequestError('Failed to request ride. Please try again.'));
+      }
+    } catch (e) {
+      emit(RideRequestError('Error requesting ride: $e'));
+    }
+  }
+
+  // Calculate distance using Haversine formula
+  double _calculateDistance(double startLatitude, double startLongitude,
+      double endLatitude, double endLongitude) {
+    const double radiusOfEarthKm = 6371; // Radius of Earth in kilometers
+    double latDistance = (endLatitude - startLatitude) * pi / 180;
+    double lonDistance = (endLongitude - startLongitude) * pi / 180;
+
+    double a = sin(latDistance / 2) * sin(latDistance / 2) +
+        cos(startLatitude * pi / 180) *
+            cos(endLatitude * pi / 180) *
+            sin(lonDistance / 2) *
+            sin(lonDistance / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return radiusOfEarthKm * c; // Distance in kilometers
+  }
+
+  // Calculate fare based on distance
+  double _calculateFare(double distanceInKm) {
+    if (distanceInKm <= 2) {
+      return 40; // Flat rate for 2 km or less
+    } else {
+      return 40 + ((distanceInKm - 2) * 20); // Additional Rs. 20 per km after 2 km
+    }
+  }
+
+}
+
