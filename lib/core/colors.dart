@@ -7,4 +7,6 @@ class ThemeColors {
   static const Color brightWhite = Colors.white; // Bright White
   static const Color electricBlue = Color(0xFF00E5FF); // Electric Blue
     static const Color lightgrey = Color.fromARGB(255, 189, 189, 189); 
+        static const Color black = Colors.black; 
+
 }

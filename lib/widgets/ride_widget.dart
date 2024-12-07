@@ -5,10 +5,54 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rideuser/core/colors.dart';
+
+
+class DialogHelper {
+  static void showCustomDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+    required String primaryButtonText,
+    VoidCallback? onPrimaryButtonPressed,
+    String? secondaryButtonText,
+    VoidCallback? onSecondaryButtonPressed,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            if (secondaryButtonText != null && onSecondaryButtonPressed != null)
+              TextButton(
+                child: Text(secondaryButtonText),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onSecondaryButtonPressed();
+                },
+              ),
+            TextButton(
+              child: Text(primaryButtonText),
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (onPrimaryButtonPressed != null) {
+                  onPrimaryButtonPressed();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 
 class RideController {
   // Method to calculate the distance between two coordinates in kilometers
@@ -42,6 +86,88 @@ class RideController {
 
 
 
+// class VehicleCard extends StatelessWidget {
+//   final String vehicleName;
+//   final String imageUrl;
+//   final String vehicleType;
+//   final bool isSelected;  // Add isSelected to track selection
+//   final void Function(String vehicleType) onSelect;
+
+//   const VehicleCard({
+//     super.key,
+//     required this.vehicleName,
+//     required this.imageUrl,
+//     required this.vehicleType,
+//     required this.isSelected,
+//     required this.onSelect,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () {
+//         onSelect(vehicleType);  // Notify parent when selected
+//       },
+//       child: Card(
+//   margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+//   elevation: 5, // Slightly higher elevation for a prominent shadow effect
+//   shape: RoundedRectangleBorder(
+//     borderRadius: BorderRadius.circular(16.0), // Smooth rounded corners
+//   ),
+//   color:ThemeColors.brightWhite, // Keep the card background neutral
+//   child: Stack(
+//     alignment: Alignment.center, // Center elements in the stack
+//     children: [
+//       // Background content: Image or icon
+//       Container(
+//         width: 150, // Adjust width for a balanced layout
+//         height: 100, // Adjust height
+//         decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(16.0), // Match card corners
+//           color: isSelected ? ThemeColors.lightgrey : ThemeColors.royalPurple , // Subtle background based on selection
+//         ),
+//         child: imageUrl.isNotEmpty
+//             ? Image.asset(
+//                 imageUrl,
+//                 fit: BoxFit.cover, // Ensure the image covers the card
+//               )
+//             : const Icon(Icons.directions_car, color: Colors.green, size: 60),
+//       ),
+
+//       // Overlay text
+//       Positioned(
+//         bottom: 10, // Place text at the bottom
+//         child: Column(
+//           children: [
+//             if (vehicleName == 'Car' || vehicleName == 'Auto')
+//               Text(
+//                 vehicleName,
+//                 style: const TextStyle(
+//                   fontSize: 14,
+//                   fontWeight: FontWeight.bold,
+//                   color: Colors.black, // Black text for contrast
+//                 ),
+//               ),
+//             if (vehicleName == 'Car' || vehicleName == 'Auto')
+//               Text(
+//                 vehicleType,
+//                 style: const TextStyle(
+//                   fontSize: 12,
+//                   color: Colors.black, // Black text for better readability
+//                 ),
+//               ),
+//           ],
+//         ),
+//       ),
+//     ],
+//   ),
+// ),
+//     );
+//   }
+// }
+
+
+
 class VehicleCard extends StatelessWidget {
   final String vehicleName;
   final String imageUrl;
@@ -60,38 +186,67 @@ class VehicleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = screenWidth * 0.4; // Card takes 40% of screen width
+    final cardHeight = screenWidth * 0.25; // Card height adjusts with width
+
     return GestureDetector(
       onTap: () {
         onSelect(vehicleType);  // Notify parent when selected
       },
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
-        color: isSelected ? Colors.green.shade200 : Colors.white,  // Change color based on selection
-        child: Container(
-          width: 150, // Set custom width
-          height: 130, // Set custom height
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: cardWidth, // Ensure card width doesn't exceed screen width
+        ),
+        child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          elevation: 5, // Slightly higher elevation for a prominent shadow effect
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0), // Smooth rounded corners
+          ),
+          color: ThemeColors.brightWhite, // Keep the card background neutral
+          child: Stack(
+            alignment: Alignment.center, // Center elements in the stack
             children: [
-              imageUrl.isNotEmpty
-                  ? Image.network(
-                      imageUrl,
-                      height: 100, // Adjust image height
-                      width: 100, // Adjust image width
-                      fit: BoxFit.cover,
-                    )
-                  : const Icon(Icons.directions_car,
-                      color: Colors.green, size: 60),
-              const SizedBox(height: 8.0),
-              Text(
-                vehicleName,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              // Background content: Image or icon
+              Container(
+                width: cardWidth, // Adjust width dynamically
+                height: cardHeight, // Adjust height dynamically
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.0), // Match card corners
+                  color: isSelected ? ThemeColors.lightgrey : ThemeColors.royalPurple, // Subtle background based on selection
+                ),
+                child: imageUrl.isNotEmpty
+                    ? Image.asset(
+                        imageUrl,
+                        fit: BoxFit.cover, // Ensure the image covers the card
+                      )
+                    : const Icon(Icons.directions_car, color: Colors.green, size: 60),
               ),
-              Text(
-                vehicleType,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              // Overlay text
+              Positioned(
+                bottom: 10, // Place text at the bottom
+                child: Column(
+                  children: [
+                    if (vehicleName == 'Car' || vehicleName == 'Auto')
+                      Text(
+                        vehicleName,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, // Black text for contrast
+                        ),
+                      ),
+                    if (vehicleName == 'Car' || vehicleName == 'Auto')
+                      Text(
+                        vehicleType,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black, // Black text for better readability
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -103,37 +258,84 @@ class VehicleCard extends StatelessWidget {
 
 
   
-  buildLocationInputField({
-    required String label,
-    required TextEditingController controller,
-    required String hint,
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600,color: ThemeColors.brightWhite),
+  // buildLocationInputField({
+  //   required String label,
+  //   required TextEditingController controller,
+  //   required String hint,
+  //   required IconData icon,
+  //   required VoidCallback onPressed,
+  // }) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         label,
+  //         style: const TextStyle(fontSize: 18,
+  //          fontWeight: FontWeight.w600,color: ThemeColors.brightWhite),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       TextField(
+  //         controller: controller,
+  //           style: const TextStyle(color: ThemeColors.brightWhite), // Set text color to white
+  //         decoration: InputDecoration(
+  //           hintText: hint,hintStyle: TextStyle(color: ThemeColors.lightgrey),
+  //           border: OutlineInputBorder(
+  //             borderSide: BorderSide(color: ThemeColors.brightWhite),
+  //             borderRadius: BorderRadius.circular(20),
+  //           ),
+  //           suffixIcon: IconButton(
+  //             icon: Icon(icon),color: ThemeColors.brightWhite,
+  //             onPressed: onPressed,
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+
+Widget buildLocationInputField({
+  required BuildContext context,
+  required String label,
+  required TextEditingController controller,
+  required String hint,
+  required IconData icon,
+  required VoidCallback onPressed,
+}) {
+  final screenWidth = MediaQuery.of(context).size.width;
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: TextStyle(
+          fontSize: screenWidth * 0.05, // Adjust font size based on screen width
+          fontWeight: FontWeight.w600,
+          color: ThemeColors.brightWhite,
         ),
-        const SizedBox(height: 10),
-        TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: hint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(icon),
-              onPressed: onPressed,
-            ),
+      ),
+      const SizedBox(height: 10),
+      TextField(
+        controller: controller,
+        style: const TextStyle(color: ThemeColors.brightWhite), // Set text color to white
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(color: ThemeColors.lightgrey),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: ThemeColors.brightWhite),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(icon),
+            color: ThemeColors.brightWhite,
+            onPressed: onPressed,
           ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
 
   // lib/services/location_service.da
@@ -207,11 +409,11 @@ class MapContainerCardState extends State<MapContainerCard> {
   MapboxMapController? _mapController;
   LatLng? _currentLocationMarker;
 
-  @override
-  void dispose() {
-    _mapController?.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _mapController?.dispose();
+  //   super.dispose();
+  // }
 
   void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
@@ -262,12 +464,25 @@ class MapContainerCardState extends State<MapContainerCard> {
       iconSize: 0.3, // Adjust the size as needed
     ));
   }
-
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      width: double.infinity,
+Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final mapHeight = screenHeight * 0.3; 
+  return Container(
+    height: 300,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2), // Optional shadow for better visuals
+          blurRadius: 10,
+          offset: Offset(0, 5),
+        ),
+      ],
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(20), // Same radius as the container
       child: MapboxMap(
         accessToken:
             "pk.eyJ1IjoicmFodWw5ODA5IiwiYSI6ImNtM2N0bG5tYjIwbG4ydnNjMXF3Zmt0Y2wifQ.P4kkM2eW7eTZT9Ntw6-JVQ", // Use your Mapbox token
@@ -291,38 +506,13 @@ class MapContainerCardState extends State<MapContainerCard> {
         tiltGesturesEnabled: true, // Enable tilt gestures
         styleString: MapboxStyles.MAPBOX_STREETS,
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 
 
-// lib/widgets/loading_dialog.dart
-
-
-class LoadingDialog extends StatelessWidget {
-  final String message;
-
-  const LoadingDialog({Key? key, this.message = 'Fetching location...'})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(width: 20),
-            Text(message, style: const TextStyle(fontSize: 16)),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 
 //for fetching searched place address//
@@ -359,4 +549,54 @@ class LoadingDialog extends StatelessWidget {
 //   } 
 
 
+class LoadingScreenDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: LoadingScreenContent(),
+    );
+  }
+}
 
+class LoadingScreenContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blueAccent, Colors.deepPurple],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.local_taxi,
+              size: 100,
+              color: Colors.white,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Waiting for driver to accept...',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 40),
+            SpinKitWave(
+              color: Colors.white,
+              size: 50.0,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

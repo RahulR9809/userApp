@@ -251,6 +251,16 @@
 //   }
 // }
 
+  // onPressed: () async {
+  //           SharedPreferences prefs = await SharedPreferences.getInstance();
+  //           await prefs.clear();
+  //           Navigator.pushReplacement(
+  //             // ignore: use_build_context_synchronously
+  //             context,
+  //             MaterialPageRoute(builder: (context) => const Intropage()),
+  //           );
+  //         },
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -258,6 +268,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:rideuser/auth_intro/auth_intro.dart';
 import 'package:rideuser/core/colors.dart';
 import 'package:rideuser/profilepage/bloc/profile_bloc.dart';
+import 'package:rideuser/widgets/ride_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -266,7 +277,7 @@ class UserProfilePage extends StatefulWidget {
   @override
   State<UserProfilePage> createState() => _UserProfilePageState();
 }
-
+ final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 class _UserProfilePageState extends State<UserProfilePage> {
   XFile? profileImage;
 
@@ -292,22 +303,18 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
     final size = MediaQuery.of(context).size;
     return Scaffold(
+       key: _scaffoldKey, 
       appBar: AppBar(
         title: const Text('User Profile'),
         centerTitle: true,
         backgroundColor: ThemeColors.royalPurple, // Use royalPurple
         leading: IconButton(
-          icon: const Icon(Icons.exit_to_app),
+          icon: const Icon(Icons.menu),
           onPressed: () async {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.clear();
-            Navigator.pushReplacement(
-              // ignore: use_build_context_synchronously
-              context,
-              MaterialPageRoute(builder: (context) => const Intropage()),
-            );
+            _scaffoldKey.currentState?.openDrawer(); // Correct way to open the drawer
           },
         ),
+        
         actions: [
           BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
@@ -326,6 +333,70 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ),
         ],
       ),
+          drawer: Drawer(
+  child: Column(
+    children: <Widget>[
+      // Drawer Header
+      
+      const Divider(), // Divider between the header and other items
+
+      // Menu Items
+      ListTile(
+        leading: const Icon(Icons.home, color: ThemeColors.royalPurple),
+        title: const Text('Home'),
+        onTap: () {
+          // Handle home navigation
+        },
+      ),
+      ListTile(
+        leading: const Icon(Icons.settings, color: ThemeColors.royalPurple),
+        title: const Text('Settings'),
+        onTap: () {
+          // Handle settings navigation
+        },
+      ),
+      ListTile(
+        leading: const Icon(Icons.history, color: ThemeColors.royalPurple),
+        title: const Text('Ride History'),
+        onTap: () {
+          // Handle ride history navigation
+        },
+      ),
+      const Divider(),
+
+      // Logout Button
+  ListTile(
+  leading: const Icon(Icons.exit_to_app, color: Colors.red),
+  title: const Text('Logout', style: TextStyle(color: Colors.red)),
+  onTap: () async {
+    DialogHelper.showCustomDialog(
+      context: context,
+      title: 'Logout',
+      content: 'Click OK to logout from this application.',
+      primaryButtonText: 'OK',
+      secondaryButtonText: 'Cancel',
+      onPrimaryButtonPressed: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(builder: (context) => const Intropage()),
+        );
+      },
+      onSecondaryButtonPressed: () {
+        // Do nothing, just close the dialog
+        Navigator.of(context).pop();
+      },
+    );
+  },
+),
+
+    ],
+  ),
+),
+
+
       body: Padding(
         padding: EdgeInsets.all(size.width * 0.05),
         child: Column(
@@ -503,4 +574,5 @@ class _UserProfilePageState extends State<UserProfilePage> {
       },
     );
   }
+  
 }

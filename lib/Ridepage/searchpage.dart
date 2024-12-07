@@ -330,6 +330,7 @@ import 'package:rideuser/Ridepage/bloc/ride_event.dart';
 import 'package:rideuser/Ridepage/bloc/ride_state.dart';
 import 'dart:async';
 
+import 'package:rideuser/core/colors.dart';
 class DestinationSearchField extends StatefulWidget {
   final Function(double, double, String) onLocationSelected;
 
@@ -346,7 +347,7 @@ class _DestinationSearchFieldState extends State<DestinationSearchField> {
   @override
   void dispose() {
     _searchController.dispose();
-    _debounce?.cancel();  // Cancel debounce timer when disposed
+    _debounce?.cancel(); // Cancel debounce timer when disposed
     super.dispose();
   }
 
@@ -355,14 +356,24 @@ class _DestinationSearchFieldState extends State<DestinationSearchField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Updated Label with Desired Style
+        Text(
+          'Choose Destination',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: ThemeColors.brightWhite),
+        ),
+        const SizedBox(height: 10),
         TextField(
           controller: _searchController,
+            style: const TextStyle(color: ThemeColors.brightWhite), // Set text color to white
+
           decoration: InputDecoration(
-            labelText: 'Choose Destination',
-            hintText: 'Enter destination',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            hintText: 'Enter destination',hintStyle:TextStyle(color: ThemeColors.lightgrey),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: ThemeColors.brightWhite),
+              borderRadius: BorderRadius.circular(20),
+            ),
             suffixIcon: IconButton(
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.search,color: ThemeColors.brightWhite,),
               onPressed: () {
                 if (_searchController.text.isNotEmpty) {
                   BlocProvider.of<RideBloc>(context)
@@ -381,50 +392,50 @@ class _DestinationSearchFieldState extends State<DestinationSearchField> {
           },
         ),
         const SizedBox(height: 10),
-       BlocBuilder<RideBloc, RideState>(
-  builder: (context, state) {
-    if (state is SuggestionsLoading) {
-      return const LinearProgressIndicator();
-    } else if (state is SuggestionsLoaded) {
-      return ListView.builder(
-        shrinkWrap: true,
-        itemCount: state.suggestions.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(state.suggestions[index]),
-            onTap: () {
-              BlocProvider.of<RideBloc>(context)
-                  .add(SelectSuggestion(state.suggestions[index]));
-            },
-          );
-        },
-      );
-    } else if (state is AddressSelected) {
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (_searchController.text != state.address) {
-      setState(() {
-        _searchController.text = state.address; // Update text controller safely
-      });
-    }
-    widget.onLocationSelected(
-      state.latitude,
-      state.longitude,
-      state.address,
-    );
-  });
-  return const SizedBox.shrink();
-
-
-    } else if (state is DestinationError) {
-      return Text(
-        state.error,
-        style: const TextStyle(color: Colors.red),
-      );
-    }
-    return const SizedBox.shrink();
-  },
-)
-
+        BlocBuilder<RideBloc, RideState>(
+          builder: (context, state) {
+            if (state is SuggestionsLoading) {
+              return const LinearProgressIndicator();
+            } else if (state is SuggestionsLoaded) {
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: state.suggestions.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(
+                      state.suggestions[index],
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: ThemeColors.brightWhite),
+                    ),
+                    onTap: () {
+                      BlocProvider.of<RideBloc>(context)
+                          .add(SelectSuggestion(state.suggestions[index]));
+                    },
+                  );
+                },
+              );
+            } else if (state is AddressSelected) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (_searchController.text != state.address) {
+                  setState(() {
+                    _searchController.text = state.address; // Update text controller safely
+                  });
+                }
+                widget.onLocationSelected(
+                  state.latitude,
+                  state.longitude,
+                  state.address,
+                );
+              });
+              return const SizedBox.shrink();
+            } else if (state is DestinationError) {
+              return Text(
+                state.error,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.red),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ],
     );
   }

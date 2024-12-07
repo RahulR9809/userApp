@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:rideuser/core/colors.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
@@ -7,7 +8,7 @@ class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF212121), // Charcoal Gray Background
+      backgroundColor: ThemeColors.charcoalGray,
       appBar: AppBar(
         title: const Text(
           'Dashboard',

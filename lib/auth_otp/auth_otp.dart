@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rideuser/auth_email/auth_email.dart';
 import 'package:rideuser/auth_intro/bloc/auth_bloc.dart';
 import 'package:rideuser/auth_otp/bloc/otp_bloc.dart';
+import 'package:rideuser/core/colors.dart';
 import 'package:rideuser/widgets/auth_widgets.dart';
 
 class OtpPage extends StatefulWidget {
@@ -151,6 +152,7 @@ class _OtpPageState extends State<OtpPage> {
                   },
                   builder: (context, state) {
                     return ReusableButton(
+                      color: ThemeColors.black,
                       text: 'Confirm',
                       onPressed: () => _validateAndSubmitOTP(context),
                     );

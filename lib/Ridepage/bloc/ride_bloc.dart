@@ -10,7 +10,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:rideuser/controller/ride_controller.dart';
+import 'package:rideuser/widgets/ride_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+  List<Map<String, dynamic>> driver = [];
 
 class RideBloc extends Bloc<RideEvent, RideState> {
     final RideService _rideService = RideService();
@@ -74,6 +76,7 @@ class RideBloc extends Bloc<RideEvent, RideState> {
         SnackBar(content: Text('Turn on Location'));
       }
     } catch (e) {
+      DialogHelper.showCustomDialog(content:'please enable location service', title: 'warning', primaryButtonText: 'OK', context: event.context);
       emit(LocationError('Error fetching location: $e'));
     }
   }
@@ -124,7 +127,9 @@ Future<void> _onSelectSuggestion(
   emit(NearbyDriversLoading());
         SharedPreferences prefs = await SharedPreferences.getInstance();
       final id=  prefs.getString('userid');
-      final token=prefs.getString('googletoken');
+      final googletoken=prefs.getString('googletoken');
+      final emailtoken=prefs.getString('emailtoken');
+      final token=googletoken ?? emailtoken;
   try {
     final drivers = await RideService().getNearByDrivers(
       userId: id!, 
@@ -135,7 +140,8 @@ Future<void> _onSelectSuggestion(
       vehicleType: event.vehicleType,
       accessToken: token!, // Replace with your logic
     );
-
+driver.addAll(drivers);
+print('dirvers data is here $driver');
     emit(NearbyDriversLoaded(drivers));
   } catch (e) {
     emit(NearbyDriversError('Error fetching nearby drivers: $e'));
@@ -185,7 +191,9 @@ Future<void> _onSelectSuggestion(
       );
 
       if (response.isNotEmpty) {
+      
         emit(RideRequested('Ride requested successfully!'));
+       
       } else {
         emit(RideRequestError('Failed to request ride. Please try again.'));
       }

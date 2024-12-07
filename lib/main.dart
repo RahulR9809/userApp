@@ -5,6 +5,7 @@ import 'package:rideuser/controller/user_socket.dart';
 import 'package:rideuser/customBottomNav/bloc/bottom_nav_bloc.dart';
 import 'package:rideuser/mainpage/mainpage.dart';
 import 'package:rideuser/profilepage/bloc/profile_bloc.dart';
+import 'package:rideuser/widgets/ride_widget.dart';
 import 'controller/auth_controller.dart';
 import 'package:rideuser/auth_intro/auth_intro.dart';
 import 'package:rideuser/auth_intro/bloc/auth_bloc.dart';
@@ -14,17 +15,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   runApp(const MyApp());
-
-
-    final userSocketService = UserSocketService();
-
-  // Connect the user
-  userSocketService.connect("USER_123");
-
-  // Disconnect after 10 seconds for testing
-  Future.delayed(Duration(seconds: 10), () {
-    userSocketService.disconnect();
-  });
 }
 
 class MyApp extends StatelessWidget {
@@ -58,12 +48,17 @@ class MyApp extends StatelessWidget {
             navigatorKey.currentState?.pushReplacement(
               MaterialPageRoute(builder: (context) =>   const MainPage()),
             );
-          }else if(state is LoginLoading){
+          }
+          else if(state is LoginLoading){
             const CircularProgressIndicator();
           }
           else if (state is ErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error: ${state.message}')),
+            );
+          }else if(state is AuthBlocked){
+         ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Blocked by admin')), // Show the snackbar here
             );
           }
         },

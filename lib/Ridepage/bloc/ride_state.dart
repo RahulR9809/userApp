@@ -78,6 +78,14 @@ class RideFareCalculated extends RideState {
   RideFareCalculated(this.fare);
 }
 
+
+class ValidationSuccess extends RideState {}
+
+class ValidationError extends RideState {
+  final String message;
+
+  ValidationError(this.message);
+}
 class RideRequested extends RideState {
   final String message;
 

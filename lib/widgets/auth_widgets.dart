@@ -80,11 +80,12 @@ Widget authbutton(
 class ReusableButton extends StatelessWidget {
   final String text; 
   final VoidCallback onPressed; 
-
+  final Color color;
   const ReusableButton({
     super.key,
     required this.text,
     required this.onPressed,
+    required this.color
   });
 
   @override
@@ -94,9 +95,9 @@ class ReusableButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(15),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: color,
       ),
       child: Text(
         text,

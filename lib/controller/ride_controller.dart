@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-final userurl='192.168.1.35';
+final userurl='192.168.24.130';
 
 class RideService {
 
@@ -44,9 +44,11 @@ Future<List<Map<String, dynamic>>> getNearByDrivers({
         for (var driver in data['getNearByDrivers']) {
           var vehicleType = driver['vehicleDetails']['vehicle_type'];
           var coordinates = driver['currentLocation']['coordinates'];
-
+          var driverid=driver['_id'];
+          print('this is the $driverid');
           // Add the extracted information to the list
           driverInfoList.add({
+            'driver_id':driverid,
             'vehicle_type': vehicleType,
             'coordinates': coordinates,
           });
@@ -127,7 +129,9 @@ Future<Map<String, dynamic>> createRideRequest({
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print("Ride request created successfully!");
-      return jsonDecode(response.body);
+    final data=  jsonDecode(response.body);
+        // final tripId = data['tripdata']['_id'];
+      return data;
     } else {
       print("Failed to create ride request. Status: ${response.statusCode}");
       throw Exception('Failed to create ride request. Status: ${response.statusCode}');

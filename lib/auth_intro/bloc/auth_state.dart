@@ -24,5 +24,6 @@ final class ErrorState extends AuthState{
 
 
 
+class AuthBlocked extends AuthState {}
 
 final class UnauthenticatedState extends AuthState{}

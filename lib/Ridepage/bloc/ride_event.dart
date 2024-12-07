@@ -1,7 +1,13 @@
 
+import 'package:flutter/material.dart';
+
 sealed class RideEvent {}
 
-class FetchCurrentLocation extends RideEvent {}
+class FetchCurrentLocation extends RideEvent {
+  final BuildContext context;
+
+  FetchCurrentLocation({required this.context});
+}
 
 
 class FetchSuggestions extends RideEvent {
@@ -73,5 +79,25 @@ class RequestRide extends RideEvent {
     required this.pickupLocation,
     required this.dropLocation,
     required this.paymentMethod,
+  });
+}
+
+
+
+class ValidateRideRequest extends RideEvent {
+  final List<Map<String, dynamic>> nearbyDrivers;
+  final List<double>? pickUpCoords;
+  final List<double>? dropCoords;
+  final String? vehicleType;
+  final String pickupLocation;
+  final String dropLocation;
+
+  ValidateRideRequest({
+    required this.nearbyDrivers,
+    required this.pickUpCoords,
+    required this.dropCoords,
+    required this.vehicleType,
+    required this.pickupLocation,
+    required this.dropLocation,
   });
 }

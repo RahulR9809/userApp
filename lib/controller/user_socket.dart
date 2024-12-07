@@ -1,71 +1,225 @@
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+// class UserSocketService {
+//   late IO.Socket socket;
+
+//   // Initialize the socket
+//   void initializeSocket() {
+//     print('Initializing socket connection...');
+//     socket = IO.io('http://10.0.2.2:3003', <String, dynamic>{
+//       'path': '/socket.io/', // Match server path
+//       'transports': ['websocket'],
+//       'autoConnect': false,
+//       'timeout': 5000, // Set the connection timeout to 5 seconds
+//     });
+
+//     // Listen for connection events
+//     socket.onConnect((_) {
+//       print('Socket connected to server');
+//     });
+
+//     // Listen for errors
+//     socket.onConnectError((error) {
+//       print("Connection error: $error");
+//     });
+
+//     // Listen for disconnection events
+//     socket.onDisconnect((_) {
+//       print('Socket disconnected from the server');
+//     });
+
+//     // Handle messages from the server (optional)
+//     socket.on('message', (data) {
+//       print('Received message: $data');
+//     });
+//   }
+
+//   // Connect the socket
+//   void connectSocket(String userId) {
+//     print('Attempting to connect with userId: $userId');
+//     socket.connect();
+
+//     socket.onConnect((_) {
+//       socket.emit('user-connected', userId);  // Emit userId to server
+//       print('User ID sent to server: $userId');
+//     });
+//   }
+
+//   void emitRideRequest(Map<String, dynamic> rideRequest) {
+//     if (socket.connected) {
+//       socket.emit('ride_request', rideRequest);
+//       print('Ride request emitted: $rideRequest');
+//     } else {
+//       print('Socket is not connected. Cannot emit ride request.');
+//     }
+//   }
+
+
+//   // Disconnect the socket
+//   void disconnectSocket() {
+//     print('Disconnecting from server...');
+//     socket.disconnect();
+//     print('User disconnected');
+//   }
+// }
+ 
+
+
+
+// import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+// class UserSocketService {
+//   late IO.Socket socket;
+
+//   // Initialize the socket
+//   void initializeSocket() {
+//     print('Initializing socket connection...');
+//     socket = IO.io('http://192.168.1.35:3003', <String, dynamic>{
+//       'path': '/socket.io/', // Match server path
+//       'transports': ['websocket'],
+//       'autoConnect': false,
+//       'timeout': 5000, // Set the connection timeout to 5 seconds
+//     });
+
+//     // Listen for connection events
+//     socket.onConnect((_) {
+//       print('Socket connected to server');
+//     });
+
+//     // Listen for errors
+//     socket.onConnectError((error) {
+//       print("Connection error: $error");
+//     });
+
+//     // Listen for disconnection events
+//     socket.onDisconnect((_) {
+//       print('Socket disconnected from the server');
+//     });
+
+//     // Handle messages from the server (optional)
+//     socket.on('message', (data) {
+//       print('Received message: $data');
+//     });
+//   }
+
+//   // Connect the socket
+//   void connectSocket(String userId) {
+//     print('Attempting to connect with userId: $userId');
+//     socket.connect();
+
+//     socket.onConnect((_) {
+//       socket.emit('user-connected', userId);  // Emit userId to server
+//       print('User ID sent to server: $userId');
+//     });
+//   }
+
+//   // Emit a ride request to the driver
+//   void emitRideRequestToDriver(String driverId, String tripId, Map<String, dynamic> rideRequest) {
+//     if (socket.connected) {
+//       // Include both driverId and tripId in the emitted data
+//       Map<String, dynamic> dataToEmit = {
+//         'driverId': driverId,
+//         'tripId': tripId,
+//         ...rideRequest,  // Spread the rest of the rideRequest data
+//       };
+
+//       socket.emit('ride-request', dataToEmit);
+//       print('Ride request emitted to driver: $dataToEmit');
+//     } else {
+//       print('Socket is not connected. Cannot emit ride request.');
+//     }
+//   }
+
+//   // Emit driver response after accepting, rejecting, or canceling the ride
+//   void emitDriverResponse(String tripId, String driverId, String responseStatus) {
+//     if (socket.connected) {
+//       socket.emit('driver-response', {
+//         'tripId': tripId,
+//         'driverId': driverId,
+//         'responseStatus': responseStatus, // accepted, rejected, or cancelled
+//       });
+//       print('Driver response emitted: tripId: $tripId, driverId: $driverId, responseStatus: $responseStatus');
+//     } else {
+//       print('Socket is not connected. Cannot emit driver response.');
+//     }
+//   }
+
+//   // Disconnect the socket
+//   void disconnectSocket() {
+//     print('Disconnecting from server...');
+//     socket.disconnect();
+//     print('User disconnected');
+//   }
+// }
+
+
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-final userId = '';  // Declare the userId variable globally
-
-// Function to get the userId from SharedPreferences
-id() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? storedUserId = prefs.getString('userid');
-  
-  // Check if the userId exists and print debug info
-  if (storedUserId != null) {
-    print('User ID found: $storedUserId');
-    return storedUserId;
-  } else {
-    print('No User ID found in SharedPreferences');
-    return null;  // Return null if no userId is found
-  }
-}
-
 class UserSocketService {
+  static final UserSocketService _instance = UserSocketService._internal();
   late IO.Socket socket;
 
-  // Connect the user app to the server
-  void connect(String userId) {
-    print('Initializing socket connection for user...');
+  // Factory constructor to return the singleton instance
+  factory UserSocketService() {
+    return _instance;
+  }
 
-    socket = IO.io('http://10.0.2.2:3003', <String, dynamic>{
-        'path': '/socket.io/', // Match server path
+  // Private constructor
+  UserSocketService._internal();
+
+  // Initialize the socket
+  void initializeSocket() {
+    print('Initializing socket connection...');
+    socket = IO.io('http://192.168.24.130:3003', <String, dynamic>{
+      'path': '/socket.io/',
       'transports': ['websocket'],
       'autoConnect': false,
-      'timeout': 10000, // Set the connection timeout to 5 seconds
+      'timeout': 5000, // Set the connection timeout to 5 seconds
     });
 
-    // Attempt to connect to the server
-    socket.connect();
-
-    // Handle successful connection
+    // Listen for connection events
     socket.onConnect((_) {
-      print('User connected: $userId');
-      socket.emit('user-connected', userId);  // Emit the user ID to the server
-      print('User ID sent to server: $userId');
+      print('Socket connected to server');
     });
 
-    // Handle connection error
+    // Listen for errors
     socket.onConnectError((error) {
       print("Connection error: $error");
     });
 
-    // Handle socket disconnection
+    // Listen for disconnection events
     socket.onDisconnect((_) {
-      print('User disconnected from the server');
+      print('Socket disconnected from the server');
     });
 
-    // Handle socket connection events
-    socket.on('connect', (_) {
-      print('Socket connected to server');
-    });
-
-    // Handle messages from the server (if needed)
+    // Handle messages from the server (optional)
     socket.on('message', (data) {
       print('Received message: $data');
     });
   }
 
-  // Disconnect the socket when done
-  void disconnect() {
-    print('Disconnecting user from server...');
+  // Connect the socket
+  void connectSocket(String userId) {
+    print('Attempting to connect with userId: $userId');
+    socket.connect();
+
+    socket.onConnect((_) {
+      socket.emit('user-connected', userId);  // Emit userId to server
+      print('User ID sent to server: $userId');
+    });
+  }
+
+  // Check if socket is connected
+  bool isConnected() {
+    return socket.connected;
+  }
+
+
+
+  // Disconnect the socket
+  void disconnectSocket() {
+    print('Disconnecting from server...');
     socket.disconnect();
     print('User disconnected');
   }

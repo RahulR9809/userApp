@@ -50,6 +50,14 @@ on<SigninClickedEvent>((event, emit) async {
 
   try {
     final token = await authService.signInWithGoogle();
+    //  if (token == '403') {
+    //      AuthBlocked();
+    //   } else if (token != null) {
+    //     emit(GoogleAuthenticatedState());
+    //   } else {
+    //   emit(GoogleUnAuthenticatedState());
+
+    //   }
 
     if (token != null) {
       emit(GoogleAuthenticatedState());

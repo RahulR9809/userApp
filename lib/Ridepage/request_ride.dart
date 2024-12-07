@@ -1,8 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rideuser/Ridepage/bloc/ride_bloc.dart';
 import 'package:rideuser/Ridepage/bloc/ride_event.dart';
 import 'package:rideuser/Ridepage/bloc/ride_state.dart';
+import 'package:rideuser/Ridepage/ride_start.dart';
 import 'package:rideuser/Ridepage/searchpage.dart';
 import 'package:rideuser/controller/ride_controller.dart';
 import 'package:rideuser/core/colors.dart';
@@ -11,9 +13,10 @@ import 'package:rideuser/widgets/ride_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RidePage extends StatefulWidget {
-  const RidePage({Key? key}) : super(key: key);
+  const RidePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RidePageState createState() => _RidePageState();
 }
 
@@ -34,71 +37,36 @@ class _RidePageState extends State<RidePage> {
 
   List<Map<String, dynamic>> _nearbyDrivers = [];
   String? _selectedVehicleType;
-
-  void _onLocationSelected(
-      double latitude, double longitude, String fullAddress) {
-    setState(() {
-      _destinationLatitude = latitude;
-      _destinationLongitude = longitude;
-      _destinationController.text = fullAddress;
-    });
-  }
-
-  Future<void> _fetchNearbyDrivers(double latitude, double longitude) async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      final id = prefs.getString('userid');
-      final token = prefs.getString('googletoken');
-      final drivers = await _rideService.getNearByDrivers(
-        userId: id!,
-        pickupLatitude: latitude,
-        pickupLongitude: longitude,
-        dropLatitude: _destinationLatitude ?? latitude,
-        dropLongitude: _destinationLongitude ?? longitude,
-        vehicleType: _selectedVehicleType,
-        accessToken: token!,
-      );
-
-      setState(() {
-        _nearbyDrivers = drivers;
-      });
-
-      _updateMapWithDrivers();
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching nearby drivers: $e')),
-      );
-    }
-  }
-
-  void _updateMapWithDrivers() {
-    for (var driver in _nearbyDrivers) {
-      double latitude = driver['coordinates'][1];
-      double longitude = driver['coordinates'][0];
-      String vehicleType = driver['vehicle_type'];
-
-      _mapContainerKey.currentState
-          ?.addDriverMarker(latitude, longitude, vehicleType);
-    }
-  }
-
-  void _selectVehicle(String vehicleType) {
-    setState(() {
-      _selectedVehicleType = vehicleType;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+        var screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: ThemeColors.charcoalGray,
       appBar: AppBar(
         title: const Text('Ride Booking'),
         backgroundColor: ThemeColors.royalPurple,
       ),
-      body: SingleChildScrollView(
+      body:  
+      //  BlocListener<RideBloc, RideState>(
+      //   listener: (context, state) {
+      //     if (state is RideRequested) {
+      //       // Navigate to the Ride Start Page
+      //       Navigator.pushReplacement(
+      //         context,
+      //         MaterialPageRoute(builder: (context) =>  RideStart()),
+      //       );
+      //     } else if (state is RideRequestError) {
+      //       // Show an error message if the request fails
+      //       ScaffoldMessenger.of(context).showSnackBar(
+      //         SnackBar(content: Text('failed requesting ride')),
+      //       );
+      //     }
+      //   }, 
+      //  child:
+         SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(screenSize.width * 0.04),
           child: Column(
             children: [
               BlocBuilder<RideBloc, RideState>(
@@ -130,8 +98,8 @@ class _RidePageState extends State<RidePage> {
                       icon: Icons.my_location,
                       onPressed: () {
                         BlocProvider.of<RideBloc>(context)
-                            .add(FetchCurrentLocation());
-                      },
+                            .add(FetchCurrentLocation(context: context));
+                      }, context: context,
                     );
                   } else if (state is LocationError) {
                     return buildLocationInputField(
@@ -141,8 +109,8 @@ class _RidePageState extends State<RidePage> {
                       icon: Icons.error,
                       onPressed: () {
                         BlocProvider.of<RideBloc>(context)
-                            .add(FetchCurrentLocation());
-                      },
+                            .add(FetchCurrentLocation(context: context));
+                      }, context: context,
                     );
                   }
 
@@ -153,8 +121,8 @@ class _RidePageState extends State<RidePage> {
                     icon: Icons.my_location,
                     onPressed: () {
                       BlocProvider.of<RideBloc>(context)
-                          .add(FetchCurrentLocation());
-                    },
+                          .add(FetchCurrentLocation(context: context));
+                    }, context: context,
                   );
                 },
               ),
@@ -193,7 +161,9 @@ class _RidePageState extends State<RidePage> {
                     }
                     return ReusableButton(
                       text: 'Search Nearby Drivers',
+                      color: ThemeColors.royalPurple,
                       onPressed: () {
+                        print('nearbydrivers$_nearbyDrivers');
                         if (_currentLatitude != null &&
                             _currentLongitude != null) {
                           BlocProvider.of<RideBloc>(context).add(
@@ -224,7 +194,8 @@ class _RidePageState extends State<RidePage> {
               const SizedBox(height: 15),
               const Text(
                 'Available Electric Vehicles',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20,
+                 fontWeight: FontWeight.bold,color: ThemeColors.brightWhite),
               ),
               const SizedBox(height: 10),
               Row(
@@ -232,14 +203,14 @@ class _RidePageState extends State<RidePage> {
                 children: [
                   VehicleCard(
                     vehicleName: 'Electric Car',
-                    imageUrl: '',
+                    imageUrl: 'assets/rideCar.png',
                     vehicleType: 'Car',
                     onSelect: _selectVehicle,
                     isSelected: _selectedVehicleType == 'Car',
                   ),
                   VehicleCard(
                     vehicleName: 'Electric Auto',
-                    imageUrl: '',
+                    imageUrl: 'assets/rideAuto.png',
                     vehicleType: 'Auto',
                     onSelect: _selectVehicle,
                     isSelected: _selectedVehicleType == 'Auto',
@@ -247,44 +218,8 @@ class _RidePageState extends State<RidePage> {
                 ],
               ),
               const SizedBox(height: 15),
-              // ReusableButton(
-              //   text: 'Request Ride',
-              //   onPressed: () async {
-              //     double distance = _rideController.calculateDistance(
-              //       _currentLatitude!,
-              //       _currentLongitude!,
-              //       _destinationLatitude!,
-              //       _destinationLongitude!,
-              //     );
-
-              //     double fare = _rideController.calculateFare(distance);
-
-              //     SharedPreferences prefs =
-              //         await SharedPreferences.getInstance();
-              //     final userId = prefs.getString('userid');
-              //     final paymentMethod = 'Online-Payment';
-              //     await _rideService.createRideRequest(
-              //       userId: userId!,
-              //       fare: fare,
-              //       distance: distance,
-              //       duration: distance * 2,
-              //       pickUpCoords: [_currentLatitude!, _currentLongitude!],
-              //       dropCoords: [_destinationLatitude!, _destinationLongitude!],
-              //       vehicleType: _selectedVehicleType ?? 'Car',
-              //       pickupLocation: _currentLocationController.text,
-              //       dropLocation: _destinationController.text,
-              //       paymentMethod: paymentMethod,
-              //     );
-
-              //     ScaffoldMessenger.of(context).showSnackBar(
-              //       const SnackBar(
-              //           content: Text('Ride requested successfully!')),
-              //     );
-              //   },
-              // ),
-
-
-                ReusableButton(
+              ReusableButton(
+               color: ThemeColors.royalPurple,
                 text: 'Request Ride',
                 onPressed: () async {
                   // Calculate distance
@@ -294,7 +229,7 @@ class _RidePageState extends State<RidePage> {
                     _destinationLatitude!,
                     _destinationLongitude!,
                   );
-
+                  driver.clear();
                   // Calculate fare
                   double fare = _rideController.calculateFare(distance);
 
@@ -313,8 +248,7 @@ class _RidePageState extends State<RidePage> {
                     pickupLocation: _currentLocationController.text,
                     dropLocation: _destinationController.text,
                     paymentMethod: paymentMethod,
-                  ));
-
+                  ));                
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Ride requested successfully!')),
@@ -326,5 +260,82 @@ class _RidePageState extends State<RidePage> {
         ),
       ),
     );
+  }
+  void _onLocationSelected(
+      double latitude, double longitude, String fullAddress) {
+    setState(() {
+      _destinationLatitude = latitude;
+      _destinationLongitude = longitude;
+      _destinationController.text = fullAddress;
+    });
+  }
+
+  Future<void> _fetchNearbyDrivers(double latitude, double longitude) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final id = prefs.getString('userid');
+      final token = prefs.getString('googletoken');
+      final drivers = await _rideService.getNearByDrivers(
+        userId: id!,
+        pickupLatitude: latitude,
+        pickupLongitude: longitude,
+        dropLatitude: _destinationLatitude ?? latitude,
+        dropLongitude: _destinationLongitude ?? longitude,
+        vehicleType: _selectedVehicleType,
+        accessToken: token!,
+      );
+
+      setState(() {
+        _nearbyDrivers = drivers;
+      });
+
+      _updateMapWithDrivers();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching nearby drivers: $e')),
+      );
+    }
+  }
+
+  Map<String, dynamic> _getNearestDriver(List<Map<String, dynamic>> drivers) {
+    double nearestDistance = double.infinity;
+    Map<String, dynamic> nearestDriver = {};
+
+    for (var driver in drivers) {
+      double driverLatitude = driver['coordinates'][1];
+      double driverLongitude = driver['coordinates'][0];
+
+      // Calculate the distance to the driver
+      double distance = _rideController.calculateDistance(
+        _currentLatitude!,
+        _currentLongitude!,
+        driverLatitude,
+        driverLongitude,
+      );
+
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestDriver = driver;
+      }
+    }
+
+    return nearestDriver;
+  }
+
+  void _updateMapWithDrivers() {
+    for (var driver in _nearbyDrivers) {
+      double latitude = driver['coordinates'][1];
+      double longitude = driver['coordinates'][0];
+      String vehicleType = driver['vehicle_type'];
+
+      _mapContainerKey.currentState
+          ?.addDriverMarker(latitude, longitude, vehicleType);
+    }
+  }
+
+  void _selectVehicle(String vehicleType) {
+    setState(() {
+      _selectedVehicleType = vehicleType.trim();
+    });
   }
 }

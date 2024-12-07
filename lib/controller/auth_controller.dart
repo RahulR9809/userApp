@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final userurl='192.168.1.35';
+final userurl='192.168.24.130';
 
 
 Map<String, dynamic>? userdata;
@@ -138,7 +138,10 @@ class AuthService {
         await prefs.setString('name', userdata?['name']);
         await prefs.setString('email', userdata?['email']);
         return token;
-      } else {
+      } else if (response.statusCode == 403) {
+      debugPrint('Forbidden: ${response.body}');
+      return '403'; // Return the string "403" for 403 responses
+    }  else {
         debugPrint(
             'Failed to authenticate with backend: ${response.statusCode}');
         return null;
