@@ -101,3 +101,6 @@ class ValidateRideRequest extends RideEvent {
     required this.dropLocation,
   });
 }
+
+
+

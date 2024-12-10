@@ -325,9 +325,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rideuser/Ridepage/bloc/ride_bloc.dart';
-import 'package:rideuser/Ridepage/bloc/ride_event.dart';
-import 'package:rideuser/Ridepage/bloc/ride_state.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_bloc.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_event.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_state.dart';
 import 'dart:async';
 
 import 'package:rideuser/core/colors.dart';

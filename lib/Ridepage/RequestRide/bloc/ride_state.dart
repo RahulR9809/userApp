@@ -99,3 +99,5 @@ class RideRequestError extends RideState {
 }
 
 class RideLoading extends RideState {}
+
+

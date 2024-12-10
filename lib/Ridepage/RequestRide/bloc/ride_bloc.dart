@@ -1,11 +1,12 @@
 
 // Ride BLoC Implementation
+import 'dart:async';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:rideuser/Ridepage/bloc/ride_event.dart';
-import 'package:rideuser/Ridepage/bloc/ride_state.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_event.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -22,7 +23,6 @@ class RideBloc extends Bloc<RideEvent, RideState> {
      on<FetchSuggestions>(_onFetchSuggestions);
     on<SelectSuggestion>(_onSelectSuggestion);
         on<FetchNearbyDrivers>(_onFetchNearbyDrivers);
-
 
           on<CalculateRideDistance>(_onCalculateRideDistance);
     on<CalculateFare>(_onCalculateFare);
@@ -227,6 +227,8 @@ print('dirvers data is here $driver');
       return 40 + ((distanceInKm - 2) * 20); // Additional Rs. 20 per km after 2 km
     }
   }
+
+
 
 }
 

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-final userurl='192.168.24.130';
+final userurl='192.168.24.213';
 
 class RideService {
 
@@ -141,6 +141,8 @@ Future<Map<String, dynamic>> createRideRequest({
     throw Exception('Error occurred: $error');
   }
 }
+
+
 Future<List<String>> fetchPickupLocation(String search) async {
   // Fetch the access token from SharedPreferences
   SharedPreferences prefs = await SharedPreferences.getInstance();

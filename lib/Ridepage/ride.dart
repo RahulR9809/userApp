@@ -97,7 +97,7 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:rideuser/Ridepage/request_ride.dart';
+import 'package:rideuser/Ridepage/RequestRide/request_ride.dart';
 import 'package:rideuser/controller/user_socket.dart';
 import 'package:rideuser/core/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -482,21 +482,13 @@ class StartRide extends StatelessWidget {
 
                 if (userId != null) {
                   UserSocketService userSocketService = UserSocketService();
-                  userSocketService.initializeSocket();
                   userSocketService.connectSocket(userId);
 
-                  await Future.delayed(Duration(seconds: 2));
 
-                  if (userSocketService.isConnected()) {
-                    Navigator.push(
+                   Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => RidePage()),
                     );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Failed to connect to socket. Try again later.')),
-                    );
-                  }
                 } else {
                   print('No user ID found');
                 }

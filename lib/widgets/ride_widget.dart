@@ -504,7 +504,7 @@ Widget build(BuildContext context) {
         scrollGesturesEnabled: true, // Enable scroll gestures
         rotateGesturesEnabled: true, // Enable rotation gestures
         tiltGesturesEnabled: true, // Enable tilt gestures
-        styleString: MapboxStyles.MAPBOX_STREETS,
+        styleString:  MapboxStyles.MAPBOX_STREETS,
       ),
     ),
   );
@@ -550,52 +550,74 @@ Widget build(BuildContext context) {
 
 
 class LoadingScreenDialog extends StatelessWidget {
+  const LoadingScreenDialog({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.transparent,
-      child: LoadingScreenContent(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      elevation: 10,
+      backgroundColor: Colors.white,
+      child: const LoadingScreenContent(),
     );
   }
 }
 
 class LoadingScreenContent extends StatelessWidget {
+  const LoadingScreenContent({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blueAccent, Colors.deepPurple],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.local_taxi,
-              size: 100,
-              color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Image Placeholder
+          ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Image.asset(
+              'assets/waiting.png',
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
             ),
-            SizedBox(height: 20),
-            Text(
-              'Waiting for driver to accept...',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+          ),
+          const SizedBox(height: 20),
+          // Loading Message
+          const Text(
+            'Waiting for a driver to pick it up...',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
             ),
-            SizedBox(height: 40),
-            SpinKitWave(
-              color: Colors.white,
-              size: 50.0,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 30),
+          // Loading Animation with a Custom Effect
+          TweenAnimationBuilder<double>(
+            duration: const Duration(seconds: 2),
+            tween: Tween<double>(begin: 0.8, end: 1.2),
+            curve: Curves.easeInOut,
+            builder: (context, scale, child) {
+              return Transform.scale(
+                scale: scale,
+                child: const SpinKitWaveSpinner(
+                  color: Color.fromARGB(255, 180, 238, 185),
+                  size: 70.0,
+                  waveColor: Colors.blueAccent,
+                ),
+              );
+            },
+            onEnd: () {
+              // Restart the animation by reversing it
+            },
+          ),
+        ],
       ),
     );
   }
