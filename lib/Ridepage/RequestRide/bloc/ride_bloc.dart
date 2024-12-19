@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rideuser/Ridepage/RequestRide/bloc/ride_event.dart';
 import 'package:rideuser/Ridepage/RequestRide/bloc/ride_state.dart';
@@ -73,7 +74,7 @@ class RideBloc extends Bloc<RideEvent, RideState> {
           address: address,
         ));
       } else {
-        SnackBar(content: Text('Turn on Location'));
+        const SnackBar(content: Text('Turn on Location'));
       }
     } catch (e) {
       DialogHelper.showCustomDialog(content:'please enable location service', title: 'warning', primaryButtonText: 'OK', context: event.context);
@@ -141,7 +142,9 @@ Future<void> _onSelectSuggestion(
       accessToken: token!, // Replace with your logic
     );
 driver.addAll(drivers);
-print('dirvers data is here $driver');
+if (kDebugMode) {
+  print('dirvers data is here $driver');
+}
     emit(NearbyDriversLoaded(drivers));
   } catch (e) {
     emit(NearbyDriversError('Error fetching nearby drivers: $e'));

@@ -41,13 +41,12 @@
 //   }
 // }
 
-
 // }
-
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:rideuser/controller/user_socket.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'ridestart_event.dart';
 part 'ridestart_state.dart';
@@ -65,6 +64,11 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
       // Fetch the latest ride data from the socket service
       final rideData = socketService.latestRideData;
       if (rideData.isNotEmpty) {
+        final driverid = rideData['driverId'];
+        final tripid=rideData['_id'];
+        print("this is the trip id:$tripid");
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('driverid', driverid);
         emit(RideAcceptedState(rideData));
       }
     } catch (e) {

@@ -6,3 +6,11 @@ class ConnectSocketEvent extends SocketEvent {
 }
 
 class DisconnectSocketEvent extends SocketEvent {}
+
+
+class ChatConnectevent extends SocketEvent{
+  final String userid;
+
+  ChatConnectevent({required this.userid});
+}
+class DisconnectChatEvent extends SocketEvent {}

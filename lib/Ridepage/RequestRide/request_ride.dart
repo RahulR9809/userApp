@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rideuser/Ridepage/RequestRide/bloc/ride_bloc.dart';
@@ -6,7 +7,6 @@ import 'package:rideuser/Ridepage/RequestRide/bloc/ride_state.dart';
 import 'package:rideuser/Ridepage/RideStart/ride_start.dart';
 import 'package:rideuser/Ridepage/searchpage.dart';
 import 'package:rideuser/controller/ride_controller.dart';
-import 'package:rideuser/controller/user_socket.dart';
 import 'package:rideuser/core/colors.dart';
 import 'package:rideuser/widgets/auth_widgets.dart';
 import 'package:rideuser/widgets/ride_widget.dart';
@@ -26,8 +26,8 @@ class _RidePageState extends State<RidePage> {
   final TextEditingController _destinationController = TextEditingController();
   final RideController _rideController = RideController();
 
-  // double? _currentLatitude;
-  // double? _currentLongitude;
+  double? _currentLatitude;
+  double? _currentLongitude;
   double? _destinationLatitude;
   double? _destinationLongitude;
 
@@ -40,18 +40,18 @@ class _RidePageState extends State<RidePage> {
 
 
 
-   // have to clear these after use
+  //  // have to clear these after use
 
-   double? _currentLatitude = 9.931233; // Default latitude
-  double? _currentLongitude = 76.267304; // Default longitude
-  final String _defaultAddress =
-      'Edathuruthikaran Holdings, 10/450-2, Kundannoor, Maradu, Ernakulam, Kerala 682304';
-  @override
-  void initState() {
-    super.initState();
-    _currentLocationController.text = _defaultAddress;
-  }
-   // have to clear these after use
+  //  double? _currentLatitude = 9.931233; // Default latitude
+  // double? _currentLongitude = 76.267304; // Default longitude
+  // final String _defaultAddress =
+  //     'Edathuruthikaran Holdings, 10/450-2, Kundannoor, Maradu, Ernakulam, Kerala 682304';
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _currentLocationController.text = _defaultAddress;
+  // }
+  //  // have to clear these after use
 
 
 
@@ -60,21 +60,21 @@ class _RidePageState extends State<RidePage> {
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-        backgroundColor: ThemeColors.charcoalGray,
+        backgroundColor: ThemeColors.lightWhite,
         appBar: AppBar(
-          title: const Text('Ride Booking'),
-          backgroundColor: ThemeColors.royalPurple,
+          title: const Text('Ride Booking',style: TextStyle(color:ThemeColors.lightGrey),),
+          backgroundColor: ThemeColors.green,
         ),
         body: BlocListener<RideBloc, RideState>(
           listener: (context, state) {
             if (state is RideRequested) {
               // Navigate to the Ride Start Page
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => RideStart()));
+                  MaterialPageRoute(builder: (context) => const RideStart()));
             } else if (state is RideRequestError) {
               // Show an error message if the request fails
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('failed requesting ride')),
+                const SnackBar(content: Text('failed requesting ride')),
               );
             }
           },
@@ -180,9 +180,11 @@ class _RidePageState extends State<RidePage> {
                         }
                         return ReusableButton(
                           text: 'Search Nearby Drivers',
-                          color: ThemeColors.royalPurple,
+                          color: ThemeColors.green,
                           onPressed: () {
-                            print('nearbydrivers$_nearbyDrivers');
+                            if (kDebugMode) {
+                              print('nearbydrivers$_nearbyDrivers');
+                            }
                             if (_currentLatitude != null &&
                                 _currentLongitude != null) {
                               BlocProvider.of<RideBloc>(context).add(
@@ -216,7 +218,7 @@ class _RidePageState extends State<RidePage> {
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: ThemeColors.brightWhite),
+                        color: ThemeColors.darkGrey),
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -240,7 +242,7 @@ class _RidePageState extends State<RidePage> {
                   ),
                   const SizedBox(height: 15),
                   ReusableButton(
-                    color: ThemeColors.royalPurple,
+                    color: ThemeColors.green,
                     text: 'Request Ride',
                     onPressed: () async {
                       // Calculate distance
@@ -257,7 +259,7 @@ class _RidePageState extends State<RidePage> {
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       final userId = prefs.getString('userid');
-                      final paymentMethod = 'Online-Payment';
+                      const paymentMethod = 'Online-Payment';
                       BlocProvider.of<RideBloc>(context).add(RequestRide(
                         userId: userId!,
                         fare: fare,

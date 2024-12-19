@@ -41,7 +41,7 @@ Widget authbutton(
   BuildContext context,
   String text,
   VoidCallback onPressed, {
-  String? imagePath,
+  String? imagePath, required Color buttonColor, required Color textColor, required borderColor,
 }) {
   final size = MediaQuery.of(context).size;
   return ElevatedButton(
@@ -156,7 +156,6 @@ class ElectraAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  // This specifies the preferred height of the AppBar
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

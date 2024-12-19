@@ -334,9 +334,10 @@ import 'package:rideuser/core/colors.dart';
 class DestinationSearchField extends StatefulWidget {
   final Function(double, double, String) onLocationSelected;
 
-  const DestinationSearchField({Key? key, required this.onLocationSelected}) : super(key: key);
+  const DestinationSearchField({super.key, required this.onLocationSelected});
 
   @override
+  // ignore: library_private_types_in_public_api
   _DestinationSearchFieldState createState() => _DestinationSearchFieldState();
 }
 
@@ -357,23 +358,23 @@ class _DestinationSearchFieldState extends State<DestinationSearchField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Updated Label with Desired Style
-        Text(
+        const Text(
           'Choose Destination',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: ThemeColors.brightWhite),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: ThemeColors.darkGrey),
         ),
         const SizedBox(height: 10),
         TextField(
           controller: _searchController,
-            style: const TextStyle(color: ThemeColors.brightWhite), // Set text color to white
+            style: const TextStyle(color: ThemeColors.darkGrey), // Set text color to white
 
           decoration: InputDecoration(
-            hintText: 'Enter destination',hintStyle:TextStyle(color: ThemeColors.lightgrey),
+            hintText: 'Enter destination',hintStyle:const TextStyle(color: ThemeColors.lightGrey),
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: ThemeColors.brightWhite),
+              borderSide: const BorderSide(color: ThemeColors.darkGrey),
               borderRadius: BorderRadius.circular(20),
             ),
             suffixIcon: IconButton(
-              icon: const Icon(Icons.search,color: ThemeColors.brightWhite,),
+              icon: const Icon(Icons.search,color: ThemeColors.darkGrey,),
               onPressed: () {
                 if (_searchController.text.isNotEmpty) {
                   BlocProvider.of<RideBloc>(context)
@@ -404,7 +405,7 @@ class _DestinationSearchFieldState extends State<DestinationSearchField> {
                   return ListTile(
                     title: Text(
                       state.suggestions[index],
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: ThemeColors.brightWhite),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: ThemeColors.darkGrey),
                     ),
                     onTap: () {
                       BlocProvider.of<RideBloc>(context)

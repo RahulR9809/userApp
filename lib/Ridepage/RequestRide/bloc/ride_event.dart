@@ -22,6 +22,9 @@ class SelectSuggestion extends RideEvent {
   SelectSuggestion(this.address);
 }
 
+class ClearSuggestions extends RideEvent {}
+
+
 class FetchNearbyDrivers extends RideEvent {
   final double latitude;
   final double longitude;

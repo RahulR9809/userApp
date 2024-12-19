@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-final userurl='192.168.24.213';
+const userurl='192.168.24.158';
 
 class RideService {
 
@@ -32,7 +33,9 @@ Future<List<Map<String, dynamic>>> getNearByDrivers({
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 201) {
-      print('Successfully fetched nearest driver');
+      if (kDebugMode) {
+        print('Successfully fetched nearest driver');
+      }
 
       // Decode the response body
       final data = jsonDecode(response.body);
@@ -45,7 +48,9 @@ Future<List<Map<String, dynamic>>> getNearByDrivers({
           var vehicleType = driver['vehicleDetails']['vehicle_type'];
           var coordinates = driver['currentLocation']['coordinates'];
           var driverid=driver['_id'];
-          print('this is the $driverid');
+          if (kDebugMode) {
+            print('this is the $driverid');
+          }
           // Add the extracted information to the list
           driverInfoList.add({
             'driver_id':driverid,
@@ -53,8 +58,12 @@ Future<List<Map<String, dynamic>>> getNearByDrivers({
             'coordinates': coordinates,
           });
         }
-print('this is the listdata:$driverInfoList');
-print(data);
+if (kDebugMode) {
+  print('this is the listdata:$driverInfoList');
+}
+if (kDebugMode) {
+  print(data);
+}
         // Return the list of vehicle details and coordinates
         return driverInfoList;
       } else {
@@ -86,24 +95,10 @@ Future<Map<String, dynamic>> createRideRequest({
   try {
        SharedPreferences prefs = await SharedPreferences.getInstance();
        String? accessToken= prefs.getString('emailtoken');
-       if(accessToken==null){
-        accessToken=prefs.getString('googletoken');
+       accessToken ??= prefs.getString('googletoken');
+       if (kDebugMode) {
+         print('ride controller $accessToken');
        }
-       print('ride controller $accessToken');
-    // Printing all data for debugging
-    print("API URL: $apiUrl");
-    print("User ID: $userId");
-    print("Fare: $fare");
-    print("Distance: $distance km");
-    print("Duration: $duration minutes");
-    print("Pickup Coordinates: $pickUpCoords");
-    print("Drop Coordinates: $dropCoords");
-    print("Vehicle Type: $vehicleType");
-    print("Pickup Location: $pickupLocation");
-    print("Drop Location: $dropLocation");
-    print("Payment Method: $paymentMethod");
-
-     
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -123,21 +118,27 @@ Future<Map<String, dynamic>> createRideRequest({
         'paymentMethod': paymentMethod,
       }),
     );
-
-    print("Response Status Code: ${response.statusCode}");
-    print("Response Body: ${response.body}");
-
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print("Ride request created successfully!");
+      if (kDebugMode) {
+        print("Ride request created successfully!");
+      }
     final data=  jsonDecode(response.body);
-        // final tripId = data['tripdata']['_id'];
+    print(data);
+        final tripId = data['tripdata']['_id'];
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+     prefs.setString('tripid', tripId);
+        print('this is the tripid here$tripId');
       return data;
     } else {
-      print("Failed to create ride request. Status: ${response.statusCode}");
+      if (kDebugMode) {
+        print("Failed to create ride request. Status: ${response.statusCode}");
+      }
       throw Exception('Failed to create ride request. Status: ${response.statusCode}');
     }
   } catch (error) {
-    print("Error occurred: $error");
+    if (kDebugMode) {
+      print("Error occurred: $error");
+    }
     throw Exception('Error occurred: $error');
   }
 }
@@ -170,7 +171,9 @@ Future<List<String>> fetchPickupLocation(String search) async {
       final data = json.decode(response.body);
 
       // Debugging: Log the response structure
-      print('Response data: $data');
+      if (kDebugMode) {
+        print('Response data: $data');
+      }
 
       // Check if the key `searchResults` exists and is a list
       if (data is Map<String, dynamic> &&

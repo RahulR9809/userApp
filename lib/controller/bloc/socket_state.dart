@@ -8,3 +8,12 @@ class SocketConnectedState extends SocketState {
 }
 
 class SocketDisconnectedState extends SocketState {}
+
+
+
+class ChatConnectedState extends SocketState {
+  final String userId;
+  ChatConnectedState(this.userId);
+}
+
+class ChatDisconnectedState extends SocketState {}

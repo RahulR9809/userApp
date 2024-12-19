@@ -1,5 +1,7 @@
 
 
+// ignore_for_file: unused_local_variable
+
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -83,91 +85,6 @@ class RideController {
   }
 }
 
-
-
-
-// class VehicleCard extends StatelessWidget {
-//   final String vehicleName;
-//   final String imageUrl;
-//   final String vehicleType;
-//   final bool isSelected;  // Add isSelected to track selection
-//   final void Function(String vehicleType) onSelect;
-
-//   const VehicleCard({
-//     super.key,
-//     required this.vehicleName,
-//     required this.imageUrl,
-//     required this.vehicleType,
-//     required this.isSelected,
-//     required this.onSelect,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: () {
-//         onSelect(vehicleType);  // Notify parent when selected
-//       },
-//       child: Card(
-//   margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-//   elevation: 5, // Slightly higher elevation for a prominent shadow effect
-//   shape: RoundedRectangleBorder(
-//     borderRadius: BorderRadius.circular(16.0), // Smooth rounded corners
-//   ),
-//   color:ThemeColors.brightWhite, // Keep the card background neutral
-//   child: Stack(
-//     alignment: Alignment.center, // Center elements in the stack
-//     children: [
-//       // Background content: Image or icon
-//       Container(
-//         width: 150, // Adjust width for a balanced layout
-//         height: 100, // Adjust height
-//         decoration: BoxDecoration(
-//           borderRadius: BorderRadius.circular(16.0), // Match card corners
-//           color: isSelected ? ThemeColors.lightgrey : ThemeColors.royalPurple , // Subtle background based on selection
-//         ),
-//         child: imageUrl.isNotEmpty
-//             ? Image.asset(
-//                 imageUrl,
-//                 fit: BoxFit.cover, // Ensure the image covers the card
-//               )
-//             : const Icon(Icons.directions_car, color: Colors.green, size: 60),
-//       ),
-
-//       // Overlay text
-//       Positioned(
-//         bottom: 10, // Place text at the bottom
-//         child: Column(
-//           children: [
-//             if (vehicleName == 'Car' || vehicleName == 'Auto')
-//               Text(
-//                 vehicleName,
-//                 style: const TextStyle(
-//                   fontSize: 14,
-//                   fontWeight: FontWeight.bold,
-//                   color: Colors.black, // Black text for contrast
-//                 ),
-//               ),
-//             if (vehicleName == 'Car' || vehicleName == 'Auto')
-//               Text(
-//                 vehicleType,
-//                 style: const TextStyle(
-//                   fontSize: 12,
-//                   color: Colors.black, // Black text for better readability
-//                 ),
-//               ),
-//           ],
-//         ),
-//       ),
-//     ],
-//   ),
-// ),
-//     );
-//   }
-// }
-
-
-
 class VehicleCard extends StatelessWidget {
   final String vehicleName;
   final String imageUrl;
@@ -204,7 +121,7 @@ class VehicleCard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0), // Smooth rounded corners
           ),
-          color: ThemeColors.brightWhite, // Keep the card background neutral
+          color: ThemeColors.darkGrey, // Keep the card background neutral
           child: Stack(
             alignment: Alignment.center, // Center elements in the stack
             children: [
@@ -214,7 +131,7 @@ class VehicleCard extends StatelessWidget {
                 height: cardHeight, // Adjust height dynamically
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16.0), // Match card corners
-                  color: isSelected ? ThemeColors.lightgrey : ThemeColors.royalPurple, // Subtle background based on selection
+                  color: isSelected ? ThemeColors.lightGreen : ThemeColors.grey, // Subtle background based on selection
                 ),
                 child: imageUrl.isNotEmpty
                     ? Image.asset(
@@ -257,42 +174,6 @@ class VehicleCard extends StatelessWidget {
 }
 
 
-  
-  // buildLocationInputField({
-  //   required String label,
-  //   required TextEditingController controller,
-  //   required String hint,
-  //   required IconData icon,
-  //   required VoidCallback onPressed,
-  // }) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         label,
-  //         style: const TextStyle(fontSize: 18,
-  //          fontWeight: FontWeight.w600,color: ThemeColors.brightWhite),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       TextField(
-  //         controller: controller,
-  //           style: const TextStyle(color: ThemeColors.brightWhite), // Set text color to white
-  //         decoration: InputDecoration(
-  //           hintText: hint,hintStyle: TextStyle(color: ThemeColors.lightgrey),
-  //           border: OutlineInputBorder(
-  //             borderSide: BorderSide(color: ThemeColors.brightWhite),
-  //             borderRadius: BorderRadius.circular(20),
-  //           ),
-  //           suffixIcon: IconButton(
-  //             icon: Icon(icon),color: ThemeColors.brightWhite,
-  //             onPressed: onPressed,
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
 
 Widget buildLocationInputField({
   required BuildContext context,
@@ -312,23 +193,23 @@ Widget buildLocationInputField({
         style: TextStyle(
           fontSize: screenWidth * 0.05, // Adjust font size based on screen width
           fontWeight: FontWeight.w600,
-          color: ThemeColors.brightWhite,
+          color: ThemeColors.darkGrey,
         ),
       ),
       const SizedBox(height: 10),
       TextField(
         controller: controller,
-        style: const TextStyle(color: ThemeColors.brightWhite), // Set text color to white
+        style: const TextStyle(color: ThemeColors.darkGrey), // Set text color to white
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: TextStyle(color: ThemeColors.lightgrey),
+          hintStyle: const TextStyle(color: ThemeColors.grey),
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: ThemeColors.brightWhite),
+            borderSide: const BorderSide(color: ThemeColors.darkGrey,),
             borderRadius: BorderRadius.circular(20),
           ),
           suffixIcon: IconButton(
             icon: Icon(icon),
-            color: ThemeColors.brightWhite,
+            color: ThemeColors.darkGrey,
             onPressed: onPressed,
           ),
         ),
@@ -408,13 +289,6 @@ class MapContainerCard extends StatefulWidget {
 class MapContainerCardState extends State<MapContainerCard> {
   MapboxMapController? _mapController;
   LatLng? _currentLocationMarker;
-
-  // @override
-  // void dispose() {
-  //   _mapController?.dispose();
-  //   super.dispose();
-  // }
-
   void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
     updateMapLocation(widget.latitude, widget.longitude);
@@ -477,7 +351,7 @@ Widget build(BuildContext context) {
         BoxShadow(
           color: Colors.black.withOpacity(0.2), // Optional shadow for better visuals
           blurRadius: 10,
-          offset: Offset(0, 5),
+          offset: const Offset(0, 5),
         ),
       ],
     ),
@@ -511,43 +385,6 @@ Widget build(BuildContext context) {
 }
 
 }
-
-
-
-
-//for fetching searched place address//
-//  Future<void> _updateDestinationLocation() async {
-//     if (_destinationController.text.isNotEmpty) {
-//       try {
-//         List<Location> locations =
-//             await locationFromAddress(_destinationController.text);
-//         if (locations.isNotEmpty) {
-//           Location location = locations.first;
-//           List<Placemark> placemarks = await placemarkFromCoordinates(
-//             location.latitude,
-//             location.longitude,
-//           );
-
-//           if (placemarks.isNotEmpty) {
-//             Placemark place = placemarks[0];
-//             String fullAddress =
-//                 "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
-
-//             setState(() {
-//               _destinationController.text = fullAddress;
-//               _destinationLatitude = location.latitude;
-//               _destinationLongitude = location.longitude;
-//             });
-//           }
-//         }
-//       } catch (e) {
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(content: Text('Error updating destination location: $e')),
-//         );
-//       }
-//     }
-//   } 
-
 
 class LoadingScreenDialog extends StatelessWidget {
   const LoadingScreenDialog({super.key});
