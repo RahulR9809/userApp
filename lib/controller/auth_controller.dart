@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const userurl='192.168.24.158';
+const userurl='10.0.2.2';
 
 
 Map<String, dynamic>? userdata;

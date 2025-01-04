@@ -22,6 +22,19 @@ class SelectSuggestion extends RideEvent {
   SelectSuggestion(this.address);
 }
 
+
+class LocationSelected extends RideEvent {
+  final double latitude;
+  final double longitude;
+  final String address;
+
+  LocationSelected(this.latitude, this.longitude, this.address);
+
+
+}
+
+
+
 class ClearSuggestions extends RideEvent {}
 
 
@@ -36,6 +49,8 @@ class FetchNearbyDrivers extends RideEvent {
     this.vehicleType,
   });
 }
+
+
 
 
 
@@ -104,6 +119,22 @@ class ValidateRideRequest extends RideEvent {
     required this.dropLocation,
   });
 }
+
+class SelectVehicle extends RideEvent {
+  final String vehicleType;
+
+  SelectVehicle({required this .vehicleType});
+}
+
+class SelectPayment extends RideEvent {
+  final String paymentMethod;
+
+  SelectPayment({required this.paymentMethod});
+}
+
+
+class ToggleBottomBar extends RideEvent {}
+
 
 
 

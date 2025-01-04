@@ -12,11 +12,11 @@ class LocationLoaded extends RideState {
   final double longitude;
   final String address;
 
-  LocationLoaded({
-    required this.latitude,
-    required this.longitude,
-    required this.address,
-  });
+  LocationLoaded(
+     this.latitude,
+     this.longitude,
+     this.address,
+  );
 }
 
 class LocationError extends RideState {
@@ -41,6 +41,8 @@ class AddressSelected extends RideState {
 
   AddressSelected(this.latitude, this.longitude, this.address);
 }
+
+
 
 class DestinationError extends RideState {
   final String error;
@@ -99,5 +101,28 @@ class RideRequestError extends RideState {
 }
 
 class RideLoading extends RideState {}
+
+
+
+
+class VehicleSelected extends RideState {
+  final String vehicleType;
+
+  VehicleSelected(this.vehicleType);
+}
+
+class PaymentSelected extends RideState {
+  final String paymentMethod;
+
+  PaymentSelected(this.paymentMethod);
+}
+
+
+
+class BottomBarVisibilityChanged extends RideState {
+  final bool isVisible;
+
+  BottomBarVisibilityChanged({required this.isVisible});
+}
 
 

@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ChatService {
-  final String baseUrl='http://192.168.24.158:3001/api/chat';
+  final String baseUrl='http://192.168.24.58:3001/api/chat';
 
 Future<void> sendMessage({
   required String senderId,

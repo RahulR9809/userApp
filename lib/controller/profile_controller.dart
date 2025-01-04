@@ -14,7 +14,7 @@ class ProfileService {
     final emailtoken =  prefs.getString('googletoken');
     final googletoken =  prefs.getString('emailtoken');
     final id = prefs.getString('userid');
-    const baseUrl = 'http://192.168.24.158:3001/api/auth/user/userProfileUpdate';
+    const baseUrl = 'http://192.168.24.58:3001/api/auth/user/userProfileUpdate';
     final token = googletoken ?? emailtoken;
 
     if (token == null || id == null) {

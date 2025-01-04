@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rideuser/Ridepage/payment/payment.dart';
 import 'package:rideuser/customBottomNav/bloc/bottom_nav_bloc.dart';
 import 'package:rideuser/customBottomNav/nav_page.dart';
-import 'package:rideuser/home/homepage.dart';
 import 'package:rideuser/Ridepage/ride.dart';
 import 'package:rideuser/profilepage/profile.dart';
 
@@ -17,7 +17,8 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     const StartRide(),          // Your home page (index 0)
-    const Homepage(),         // Your car page (index 1)
+    // const Homepage(),
+   PaymentPage(),
     const UserProfilePage(),   // Your profile page (index 2)
   ];
 

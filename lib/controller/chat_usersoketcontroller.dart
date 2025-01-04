@@ -102,7 +102,7 @@ class UserChatSocketService {
     if (kDebugMode) {
       print('Initializing chat socket connection...');
     }
-    socket = IO.io('http://192.168.24.158:3004', IO.OptionBuilder()
+    socket = IO.io('http://192.168.24.58:3004', IO.OptionBuilder()
       .setTransports(['websocket'])
       .disableAutoConnect()
       .build());

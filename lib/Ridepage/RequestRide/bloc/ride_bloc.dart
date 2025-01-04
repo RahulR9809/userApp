@@ -17,19 +17,39 @@ import 'package:shared_preferences/shared_preferences.dart';
   List<Map<String, dynamic>> driver = [];
 
 class RideBloc extends Bloc<RideEvent, RideState> {
+
     final RideService _rideService = RideService();
+  bool _isBottomBarVisible = false;
 
   RideBloc() : super(RideInitial()) {
     on<FetchCurrentLocation>(_onFetchCurrentLocation);
      on<FetchSuggestions>(_onFetchSuggestions);
     on<SelectSuggestion>(_onSelectSuggestion);
+
         on<FetchNearbyDrivers>(_onFetchNearbyDrivers);
 
           on<CalculateRideDistance>(_onCalculateRideDistance);
     on<CalculateFare>(_onCalculateFare);
     on<RequestRide>(_onRequestRide);
 
+      on<SelectVehicle>(_onSelectVehicle);
+    on<SelectPayment>(_onSelectPayment);
+    on<ToggleBottomBar>(_onToggleBottomBar);
+
+
+
   }
+
+
+
+
+
+
+  void _onToggleBottomBar(ToggleBottomBar event, Emitter<RideState> emit) {
+    _isBottomBarVisible = !_isBottomBarVisible;
+    emit(BottomBarVisibilityChanged(isVisible: _isBottomBarVisible));
+  }
+
 
   Future<void> _onFetchCurrentLocation(
       FetchCurrentLocation event, Emitter<RideState> emit) async {
@@ -69,9 +89,9 @@ class RideBloc extends Bloc<RideEvent, RideState> {
             "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
 
         emit(LocationLoaded(
-          latitude: position.latitude,
-          longitude: position.longitude,
-          address: address,
+         position.latitude,
+           position.longitude,
+          address,
         ));
       } else {
         const SnackBar(content: Text('Turn on Location'));
@@ -97,12 +117,14 @@ Future<void> _onFetchSuggestions(
 
 
 
+
+
 Future<void> _onSelectSuggestion(
     SelectSuggestion event, Emitter<RideState> emit) async {
 
     try {
       final locations = await locationFromAddress(event.address).timeout(
-        const Duration(seconds: 5),
+        const Duration(seconds: 4),
       );
       if (locations.isNotEmpty) {
         final location = locations.first;
@@ -142,6 +164,9 @@ Future<void> _onSelectSuggestion(
       accessToken: token!, // Replace with your logic
     );
 driver.addAll(drivers);
+if(drivers.isEmpty){
+  emit(NearbyDriversError('No Drivers found in you area'));
+}
 if (kDebugMode) {
   print('dirvers data is here $driver');
 }
@@ -231,6 +256,16 @@ if (kDebugMode) {
     }
   }
 
+
+
+
+  void _onSelectVehicle(SelectVehicle event, Emitter<RideState> emit) {
+    emit(VehicleSelected(event.vehicleType));
+  }
+
+  void _onSelectPayment(SelectPayment event, Emitter<RideState> emit) {
+    emit(PaymentSelected(event.paymentMethod));
+  }
 
 
 }

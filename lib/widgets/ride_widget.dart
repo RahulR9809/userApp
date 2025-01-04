@@ -56,6 +56,49 @@ class DialogHelper {
 }
 
 
+class RefactoredDialoge {
+  static void showCustomDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+    required String primaryButtonText,
+    VoidCallback? onPrimaryButtonPressed,
+    String? secondaryButtonText,
+    VoidCallback? onSecondaryButtonPressed,
+  }) {
+    showDialog(
+      context: context,
+          barrierDismissible: false, 
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            if (secondaryButtonText != null && onSecondaryButtonPressed != null)
+              TextButton(
+                child: Text(secondaryButtonText),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onSecondaryButtonPressed();
+                },
+              ),
+            TextButton(
+              child: Text(primaryButtonText),
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (onPrimaryButtonPressed != null) {
+                  onPrimaryButtonPressed();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+
 class RideController {
   // Method to calculate the distance between two coordinates in kilometers
   double calculateDistance(double startLatitude, double startLongitude,
@@ -180,8 +223,6 @@ Widget buildLocationInputField({
   required String label,
   required TextEditingController controller,
   required String hint,
-  required IconData icon,
-  required VoidCallback onPressed,
 }) {
   final screenWidth = MediaQuery.of(context).size.width;
 
@@ -206,11 +247,6 @@ Widget buildLocationInputField({
           border: OutlineInputBorder(
             borderSide: const BorderSide(color: ThemeColors.darkGrey,),
             borderRadius: BorderRadius.circular(20),
-          ),
-          suffixIcon: IconButton(
-            icon: Icon(icon),
-            color: ThemeColors.darkGrey,
-            onPressed: onPressed,
           ),
         ),
       ),
@@ -418,8 +454,8 @@ class LoadingScreenContent extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
             child: Image.asset(
               'assets/waiting.png',
-              width: 200,
-              height: 200,
+              width: 150,
+              height: 150,
               fit: BoxFit.cover,
             ),
           ),
