@@ -70,7 +70,7 @@ class CheckRideStartStatusEvent extends RidestartEvent {}
 
 
 class RideStartReceived  extends RidestartEvent {
-  final String rideData;
+  final Map<String, dynamic>  rideData;
 
   RideStartReceived(this.rideData);
 }
@@ -82,3 +82,5 @@ final String tripid;
 
   ChatSocketConnectedevent({required this.tripid});
 }
+
+class ReachedButtonClickEvent extends RidestartEvent{}

@@ -9,8 +9,21 @@ class ChatLoading extends ChatState{}
 
 
 
-class ChatMessageSent extends ChatState {}
+// class ChatMessageSent extends ChatState {
+//   final List<Map<String, dynamic>> messages;
 
+//   ChatMessageSent({required this.messages});
+
+// }
+class ChatSentMessagesUpdated extends ChatState {
+  final List<Map<String, dynamic>> messages;
+  ChatSentMessagesUpdated({required this.messages});
+}
+
+class ChatReceivedMessagesUpdated extends ChatState {
+  final List<Map<String, dynamic>> messages;
+  ChatReceivedMessagesUpdated({required this.messages});
+}
 
 // class ChatMessagesLoaded extends ChatState {
 //   final List<String> messages;

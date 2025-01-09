@@ -1,27 +1,22 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rideuser/Ridepage/RideStart/bloc/ridestart_bloc.dart';
 import 'package:rideuser/map/map_pages.dart';
-import 'package:rideuser/Ridepage/ride.dart';
 import 'package:rideuser/widgets/ride_completedwidget.dart';
-import 'package:rideuser/widgets/ride_widget.dart';
+import 'package:rideuser/widgets/ride_widget.dart';  // Import RideBottomBar
 
-class RideStart extends StatefulWidget {
-  const RideStart({super.key});
+class RideEnd extends StatefulWidget {
+  const RideEnd({super.key});
 
   @override
-  _RideStartState createState() => _RideStartState();
+  _RideEndState createState() => _RideEndState();
 }
 
-class _RideStartState extends State<RideStart> {
+class _RideEndState extends State<RideEnd> {
   Map<String, dynamic>? _rideData;
 
   @override
   Widget build(BuildContext context) {
-    // final screenHeight = MediaQuery.of(context).size.height;
-    // final screenWidth = MediaQuery.of(context).size.width;
-
     print("Building RideStart Screen");
 
     return Scaffold(
@@ -30,17 +25,19 @@ class _RideStartState extends State<RideStart> {
           // 📍 Map View
           BlocBuilder<RidestartBloc, RidestartState>(
             builder: (context, state) {
-
+              // Handle different ride simulation states
               if (state is DropSimulationState) {
-                print('Emitting PicUpSimulationState');
-                return MapboxPicupSimulation(
+print("Emitting DropSimulationState with updated coordinates: ${state.startLatLng}, ${state.endLatLng}");
+                return MapboxDropSimulation(
                   startPoint: state.startLatLng,
                   endPoint: state.endLatLng,
                 );
               }
+              // Default map view if no simulation state
               return MapboxWidget();
             },
           ),
+          
           // 📋 Bottom Bar
           BlocBuilder<RidestartBloc, RidestartState>(
             builder: (context, state) {
@@ -49,39 +46,22 @@ class _RideStartState extends State<RideStart> {
                   child: LoadingScreenDialog(),
                 );
               } else if (state is DropSimulationState) {
-                print('picup simulation state emitted');
-                _rideData = state.requestData;
-                print('this is the ridedata from picupsimulation state:$_rideData');
+                print('DropSimulationState emitted');
+                _rideData = state.requestData;  // Get ride data from state
+                print('This is the ride data: $_rideData');
                 return Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: RideBottomBar(rideData: _rideData!));
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: RidestartedBottomBar(rideData: _rideData!),
+                );
               }
-      return const SizedBox.shrink();
+              // Default state when no relevant simulation state
+              return const SizedBox.shrink();
             },
           ),
-          // BlocListener<RidestartBloc, RidestartState>(
-          //   listener: (context, state) {
-          //     if (state is CancelRideSuccess) {
-          //       showCustomSnackBar(context, 'Ride cancelled successfully!',
-          //           backgroundColor: Colors.green);
-
-          //       Navigator.pushReplacement(context,
-          //           MaterialPageRoute(builder: (context) => StartRide()));
-          //     }
-
-             
-          //   },
-          //   child: Container(),
-          // ),
         ],
       ),
     );
   }
 }
-
-
-
-
-

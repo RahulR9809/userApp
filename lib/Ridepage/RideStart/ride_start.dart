@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rideuser/Ridepage/RideStart/bloc/ridestart_bloc.dart';
+import 'package:rideuser/Ridepage/RideStart/ride_end.dart';
 import 'package:rideuser/map/map_pages.dart';
 import 'package:rideuser/Ridepage/ride.dart';
 import 'package:rideuser/widgets/ride_completedwidget.dart';
@@ -79,6 +80,13 @@ class _RideStartState extends State<RideStart> {
           ),
           BlocListener<RidestartBloc, RidestartState>(
             listener: (context, state) {
+                if (state is RidestartedState) {
+      // Navigate to RideEnd when DropSimulationState is emitted
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const RideEnd()),
+      );
+    }else
               if (state is CancelRideSuccess) {
                 showCustomSnackBar(context, 'Ride cancelled successfully!',
                     backgroundColor: Colors.green);

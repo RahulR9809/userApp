@@ -21,6 +21,8 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
       final PaymentController paymentController=PaymentController();
 RideService rideService=RideService();
   Map<String, dynamic>? _rideData;
+    Map<String, dynamic>? rideData;
+
 
   RidestartBloc(this.socketService) : super(RidestartInitial()) {
     on<CheckRideStatusEvent>(_onCheckRideStatusEvent);
@@ -40,6 +42,8 @@ RideService rideService=RideService();
      socketService.setRideStartedCallback((data) {
       add(RideStartReceived(data));
     });
+
+
     on<RideStartReceived>(_onRidestartRequestReceived);
     on<CheckRideStartStatusEvent>(_onCheckRideStartStatusEvent);
 
@@ -49,17 +53,6 @@ RideService rideService=RideService();
   }
 
 
-
-// FutureOr<void> _onChatSocketConnected(
-//     ChatSocketConnectedevent event, Emitter<ChatState> emit) async {
-//   String? userId = await _getUserId();
-//   if (userId != null) {
-//     UserChatSocketService().connectChatSocket(userId);
-//     emit(ChatConnected());
-//   } else {
-//     emit(ChatError(message: 'User ID not found'));
-//   }
-// }
 
 
 
@@ -114,16 +107,15 @@ RideService rideService=RideService();
 
 
  void _onRidestartRequestReceived(RideStartReceived event, Emitter<RidestartState> emit) {
-    if(event.rideData.isEmpty){
+  
+  rideData=event.rideData;
+      emit(RidestartRequestVisible(event.rideData));
       add(CheckRideStartStatusEvent());
-    }
-      add(CheckRideStartStatusEvent());
-
+  
   }
 
 Future<void> _onCheckRideStatusEvent(
     CheckRideStatusEvent event, Emitter<RidestartState> emit) async {
-  print("Entered _onCheckRideStatusEvent");
 
   try {
     // Check if the current state is RideRequestVisible
@@ -141,6 +133,7 @@ Future<void> _onCheckRideStatusEvent(
       // Extract driverId and tripId from rideData
       final driverId = rideData['driverId'];
       final tripId = rideData['_id'];
+      
       print('this is tripid:$tripId');
 
 
@@ -187,66 +180,66 @@ Future<void> _onCheckRideStatusEvent(
 }
 
 
-
-
-Future<void> _onCheckRideStartStatusEvent(
-    CheckRideStartStatusEvent event, Emitter<RidestartState> emit) async {
-  print("Entered _onCheckRideStatusEvent");
+Future<void> _onCheckRideStartStatusEvent(CheckRideStartStatusEvent event, Emitter<RidestartState> emit) async {
+  print("Entered _onCheckRidestartStatusEvent");
 
   try {
     // Check if the current state is RideRequestVisible
-    if (state is RidestartRequestVisible) {
-      final rideData = _rideData!;
+    print('Current state: ${state.runtimeType}');
 
+    if (state is RidestartRequestVisible) {
+      final rideDatas = rideData;
+      
       // Debug: Print the entire rideData
       print("Ride Data: $rideData");
 
-      // Check if rideData is empty
-      if (rideData.isEmpty) {
+      // Check if rideData is null or empty
+      if (rideDatas == null || rideDatas.isEmpty) {
+        print('No data found in rideData');
+        emit(RideAccepError(message: 'No ride data available.'));
         return;
       }
 
-      // Extract driverId and tripId from rideData
-      final driverId = rideData['driverId'];
-      final tripId = rideData['_id'];
-  final userid=rideData['userId'];
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // Extract coordinates from rideData safely
+      final startCoordinates = rideDatas['tripDetails']?['startLocation']?['coordinates'];
+      final endCoordinates = rideDatas['tripDetails']?['endLocation']?['coordinates'];
 
-      // Check if both IDs are not null
-      if (driverId != null && tripId != null) {
-        // Store the IDs in SharedPreferences
-        prefs.setString('driverid', driverId);
-        prefs.setString('tripid', tripId);
+      print('startCoordinates: $startCoordinates');
+      print('endCoordinates: $endCoordinates');
 
-          print('driverid:$driverId');
-      print('usesrid:$userid');
-        print('tripid in chat:$tripId');
-        // Extract coordinates from rideData
-        final startCoordinates = rideData['driverDetails']['currentLocation']['coordinates'];
-        final endCoordinates = rideData['startLocation']['coordinates'];
-
-
-        // Convert coordinates to LatLng
-        final LatLng startLatLng = LatLng(startCoordinates[1], startCoordinates[0]);
-        final LatLng endLatLng = LatLng(endCoordinates[0], endCoordinates[1]);
-
- emit(DropSimulationState(rideData,startLatLng: startLatLng, endLatLng: endLatLng));
-
-      } else {
-        // Handle missing IDs
-        emit(RideAccepError(message: 'Missing driver or trip ID'));
+      // Validate the coordinates before use
+      if (startCoordinates == null || endCoordinates == null) {
+        print('Missing coordinates data.');
+        emit(RideAccepError(message: 'Missing coordinates data.'));
+        return;
       }
+
+      // Convert coordinates to LatLng
+      try {
+        final LatLng startLatLng = LatLng(startCoordinates[0], startCoordinates[1]);  // lat, long order
+        final LatLng endLatLng = LatLng(endCoordinates[0], endCoordinates[1]);  // lat, long order
+        print('Converted startLatLng: $startLatLng');
+        print('Converted endLatLng: $endLatLng');
+
+        emit(RidestartedState());
+        emit(DropSimulationState(rideDatas, startLatLng: startLatLng, endLatLng: endLatLng));
+        print('Emitting DropSimulationState with updated coordinates');
+      } catch (e) {
+        print('Error converting coordinates: $e');
+        emit(RideAccepError(message: 'Error converting coordinates.'));
+      }
+    } else {
+      print('State is not RidestartRequestVisible, skipping processing.');
     }
   } catch (e, stackTrace) {
     // Print the error and stack trace for detailed debugging
-    print("Error occurred in _onCheckRideStatusEvent: $e");
+    print("Error occurred in _onCheckRideStartStatusEvent: $e");
     print("StackTrace: $stackTrace");
 
     // Emit error state
     emit(RideAccepError(message: 'Error checking ride status: $e'));
   }
-
 }
 
 
@@ -278,4 +271,7 @@ Future<void> _onCheckRideStartStatusEvent(
       emit(CancelRideFailure('Error: $error'));
     }
   }
+
+
+  
 }

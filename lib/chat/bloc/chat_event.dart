@@ -21,8 +21,9 @@ sealed class ChatEvent {}
 
 class MessageReceived extends ChatEvent {
   final String message;
+  final String senderid;
 
-  MessageReceived(this.message);
+  MessageReceived(this.message,this.senderid);
 }
 
 

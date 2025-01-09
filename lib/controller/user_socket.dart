@@ -6,10 +6,10 @@ class UserSocketService {
   static final UserSocketService _instance = UserSocketService._internal();
   late IO.Socket socket;
   Map<String, dynamic> latestRideData = {};
-    String latestRidestartedData='';
+Map<String, dynamic> latestRidestartedData = {};
 
   Function(Map<String, dynamic>)? _rideAcceptedCallback;
-  Function(String)? _rideStartedCallback;
+  Function(Map<String, dynamic>)? _rideStartedCallback;
 
   factory UserSocketService() {
     return _instance;
@@ -55,12 +55,12 @@ class UserSocketService {
 
 socket.on('ride-started', (data) {
   print('Ride started data from socket: $data');
-      latestRidestartedData = data;
-   if (_rideStartedCallback != null) {
-        _rideStartedCallback!(latestRidestartedData);
-      }
-
+  latestRidestartedData = Map<String, dynamic>.from(data);
+  if (_rideStartedCallback != null) {
+    _rideStartedCallback!(latestRidestartedData);
+  }
 });
+
 
 
 
@@ -79,7 +79,7 @@ print(' ride completed data from socket :$data');
   
 
 
- void setRideStartedCallback(Function(String) callback) {
+ void setRideStartedCallback(Function(Map<String, dynamic>) callback) {
     _rideStartedCallback = callback;
   }
 

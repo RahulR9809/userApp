@@ -138,6 +138,7 @@ class RidestartRequestVisible extends RidestartState {
   RidestartRequestVisible(this.requestData);
 }
 
+class RidestartedState extends RidestartState{}
 
 
 class DropSimulationState extends RidestartState {
@@ -162,3 +163,4 @@ final String driverId;
 
   ChatSocketConnectedstate({required this.driverId});
 }
+
