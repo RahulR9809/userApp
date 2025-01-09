@@ -138,3 +138,14 @@ class ToggleBottomBar extends RideEvent {}
 
 
 
+class UpdateCurrentLocation extends RideEvent {
+  final double latitude;
+  final double longitude;
+  final String address;
+
+  UpdateCurrentLocation({
+    required this.latitude,
+    required this.longitude,
+    required this.address,
+  });
+}

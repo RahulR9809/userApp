@@ -49,16 +49,12 @@ class StartRide extends StatelessWidget {
                 if (userId != null) {
                   UserSocketService userSocketService = UserSocketService();
                   userSocketService.connectSocket(userId);
-                  UserChatSocketService userChatSocketService =UserChatSocketService();
-                      userChatSocketService.connectChatSocket(userId);
+                 
                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const RidePage()),
                     );
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(builder: (context) => const ChatPage()),
-                  //   );
+
                 } else {
                   if (kDebugMode) {
                     print('No user ID found');

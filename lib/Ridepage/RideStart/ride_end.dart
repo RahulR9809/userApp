@@ -16,23 +16,7 @@ class RideStart extends StatefulWidget {
 
 class _RideStartState extends State<RideStart> {
   Map<String, dynamic>? _rideData;
-//   late ChatBloc _chatBloc;
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _chatBloc = BlocProvider.of<ChatBloc>(context);
-//     _initializeChat();
-//   }
-
-
-
-//  Future<void> _initializeChat() async {
-//      SharedPreferences pref = await SharedPreferences.getInstance();
-//     final tripid= pref.getString('tripid')??'no trip id';
-
-//     _chatBloc.add(ChatSocketConnectedevent(userid: tripid));
-//   }
   @override
   Widget build(BuildContext context) {
     // final screenHeight = MediaQuery.of(context).size.height;
@@ -47,7 +31,7 @@ class _RideStartState extends State<RideStart> {
           BlocBuilder<RidestartBloc, RidestartState>(
             builder: (context, state) {
 
-              if (state is PicUpSimulationState) {
+              if (state is DropSimulationState) {
                 print('Emitting PicUpSimulationState');
                 return MapboxPicupSimulation(
                   startPoint: state.startLatLng,
@@ -64,7 +48,7 @@ class _RideStartState extends State<RideStart> {
                 return const Center(
                   child: LoadingScreenDialog(),
                 );
-              } else if (state is PicUpSimulationState) {
+              } else if (state is DropSimulationState) {
                 print('picup simulation state emitted');
                 _rideData = state.requestData;
                 print('this is the ridedata from picupsimulation state:$_rideData');
@@ -77,20 +61,20 @@ class _RideStartState extends State<RideStart> {
       return const SizedBox.shrink();
             },
           ),
-          BlocListener<RidestartBloc, RidestartState>(
-            listener: (context, state) {
-              if (state is CancelRideSuccess) {
-                showCustomSnackBar(context, 'Ride cancelled successfully!',
-                    backgroundColor: Colors.green);
+          // BlocListener<RidestartBloc, RidestartState>(
+          //   listener: (context, state) {
+          //     if (state is CancelRideSuccess) {
+          //       showCustomSnackBar(context, 'Ride cancelled successfully!',
+          //           backgroundColor: Colors.green);
 
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => StartRide()));
-              }
+          //       Navigator.pushReplacement(context,
+          //           MaterialPageRoute(builder: (context) => StartRide()));
+          //     }
 
              
-            },
-            child: Container(),
-          ),
+          //   },
+          //   child: Container(),
+          // ),
         ],
       ),
     );

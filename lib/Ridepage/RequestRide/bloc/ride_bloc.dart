@@ -36,14 +36,14 @@ class RideBloc extends Bloc<RideEvent, RideState> {
     on<SelectPayment>(_onSelectPayment);
     on<ToggleBottomBar>(_onToggleBottomBar);
 
+    on<UpdateCurrentLocation>(_onUpdateCurrentLocation);
 
 
   }
 
 
 
-
-
+  
 
   void _onToggleBottomBar(ToggleBottomBar event, Emitter<RideState> emit) {
     _isBottomBarVisible = !_isBottomBarVisible;
@@ -51,15 +51,70 @@ class RideBloc extends Bloc<RideEvent, RideState> {
   }
 
 
-  Future<void> _onFetchCurrentLocation(
+  // Future<void> _onFetchCurrentLocation(
+  //     FetchCurrentLocation event, Emitter<RideState> emit) async {
+  //   emit(LocationLoading());
+
+  //   try {
+  //     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //     if (!serviceEnabled) {
+  //       throw Exception('Location services are disabled.');
+  //     }
+
+  //     LocationPermission permission = await Geolocator.checkPermission();
+  //     if (permission == LocationPermission.denied) {
+  //       permission = await Geolocator.requestPermission();
+  //       if (permission == LocationPermission.denied) {
+  //         throw Exception('Location permission denied.');
+  //       }
+  //     }
+
+  //     if (permission == LocationPermission.deniedForever) {
+  //       throw Exception(
+  //           'Location permissions are permanently denied. Please enable them in settings.');
+  //     }
+
+  //     Position position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.bestForNavigation,
+  //     );
+
+  //     List<Placemark> placemarks = await placemarkFromCoordinates(
+  //       position.latitude,
+  //       position.longitude,
+  //     );
+
+  //     if (placemarks.isNotEmpty) {
+  //       Placemark place = placemarks[0];
+  //       String address =
+  //           "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
+
+  //       emit(LocationLoaded(
+  //        position.latitude,
+  //          position.longitude,
+  //         address,
+  //       ));
+  //     } else {
+  //       const SnackBar(content: Text('Turn on Location'));
+  //     }
+  //   } catch (e) {
+  //     DialogHelper.showCustomDialog(content:'please enable location service', title: 'warning', primaryButtonText: 'OK', context: event.context);
+  //     emit(LocationError('Error fetching location: $e'));
+  //   }
+  // }
+
+
+
+
+
+
+
+ Future<void> _onFetchCurrentLocation(
       FetchCurrentLocation event, Emitter<RideState> emit) async {
     emit(LocationLoading());
-
     try {
+      // Check location permission
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        throw Exception('Location services are disabled.');
-      }
+      if (!serviceEnabled) throw Exception('Location services are disabled.');
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -69,38 +124,32 @@ class RideBloc extends Bloc<RideEvent, RideState> {
         }
       }
 
-      if (permission == LocationPermission.deniedForever) {
-        throw Exception(
-            'Location permissions are permanently denied. Please enable them in settings.');
-      }
-
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.bestForNavigation,
+        desiredAccuracy: LocationAccuracy.high,
       );
 
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
+      // Reverse geocoding to get address
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+      String address = placemarks.isNotEmpty
+          ? "${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}"
+          : "Unknown Location";
 
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[0];
-        String address =
-            "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
-
-        emit(LocationLoaded(
-         position.latitude,
-           position.longitude,
-          address,
-        ));
-      } else {
-        const SnackBar(content: Text('Turn on Location'));
-      }
+      emit(LocationLoaded(position.latitude, position.longitude, address));
     } catch (e) {
-      DialogHelper.showCustomDialog(content:'please enable location service', title: 'warning', primaryButtonText: 'OK', context: event.context);
       emit(LocationError('Error fetching location: $e'));
     }
   }
+
+  // Handle updating location from MapPage
+  void _onUpdateCurrentLocation(
+      UpdateCurrentLocation event, Emitter<RideState> emit) {
+    emit(LocationLoaded(event.latitude, event.longitude, event.address));
+  }
+
+
+
+
 
 
 

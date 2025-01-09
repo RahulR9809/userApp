@@ -118,7 +118,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); 
   UserChatSocketService userChatSocketService = UserChatSocketService();
   UserSocketService userSocketService = UserSocketService();
-  
+  ChatBloc _chatBloc=ChatBloc();
+
   // Initialize sockets
   userSocketService.initializeSocket();
   userChatSocketService.initializeChatSocket();

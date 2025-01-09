@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class PaymentController {
-  final String ip = '10.0.2.2';
+  final String ip = '192.168.24.55';
   late final String baseUrl = 'http://$ip:3005/api/payment/user';
 
   Future<Map<String, dynamic>> makePayment({

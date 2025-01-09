@@ -5,20 +5,24 @@ sealed class ChatState {}
 
 final class ChatInitial extends ChatState {}
 
+class ChatLoading extends ChatState{}
+
 
 
 class ChatMessageSent extends ChatState {}
 
-// class ChatMessageReceived extends ChatState {
-//   final String message;
 
-//   ChatMessageReceived(this.message);
+// class ChatMessagesLoaded extends ChatState {
+//   final List<String> messages;
+//   ChatMessagesLoaded({required this.messages});
 // }
 
 class ChatMessagesLoaded extends ChatState {
-  final List<String> messages;
+  final List<Map<String, dynamic>> messages;
+
   ChatMessagesLoaded({required this.messages});
 }
+
 
 class ChatError extends ChatState{
   final String message;

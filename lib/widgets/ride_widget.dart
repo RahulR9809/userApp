@@ -304,6 +304,133 @@ class LocationService {
   }
 }
 
+
+
+
+
+
+// class MapContainerCard extends StatefulWidget {
+//   final double? latitude;
+//   final double? longitude;
+//   final double? destinationLatitude;
+//   final double? destinationLongitude;
+
+//   const MapContainerCard({
+//     super.key,
+//     this.latitude,
+//     this.longitude,
+//     this.destinationLatitude,
+//     this.destinationLongitude,
+//   });
+
+//   @override
+//   MapContainerCardState createState() => MapContainerCardState();
+// }
+
+// class MapContainerCardState extends State<MapContainerCard> {
+//   MapboxMapController? _mapController;
+//   LatLng? _currentLocationMarker;
+//   void _onMapCreated(MapboxMapController controller) {
+//     _mapController = controller;
+//     updateMapLocation(widget.latitude, widget.longitude);
+//   }
+
+//   /// Updates map location only if it differs from the current marker location
+//   void updateMapLocation(double? latitude, double? longitude) {
+//     if (_mapController != null && latitude != null && longitude != null) {
+//       LatLng newPosition = LatLng(latitude, longitude);
+//       if (isCurrentLocationMarker(newPosition.latitude, newPosition.longitude)) {
+//         return; // Skip if the new position matches the current marker
+//       }
+
+//       _currentLocationMarker = newPosition;
+//       _mapController!.animateCamera(CameraUpdate.newLatLngZoom(newPosition, 14.0));
+
+//       _mapController!.clearSymbols(); // Clear existing markers
+//       _mapController!.addSymbol(SymbolOptions(
+//         geometry: newPosition,
+//         iconImage: "assets/liveLocation.png",
+//         iconSize: 0.5,
+//       ));
+//     }
+//   }
+
+//   /// Checks if the given latitude and longitude match the current marker's location
+//   bool isCurrentLocationMarker(double latitude, double longitude) {
+//     if (_currentLocationMarker == null) return false;
+//     return _currentLocationMarker!.latitude == latitude &&
+//         _currentLocationMarker!.longitude == longitude;
+//   }
+
+//   /// Adds a driver marker with a specific vehicle type
+//   void addDriverMarker(double latitude, double longitude, String vehicleType) {
+//     String iconAsset;
+//     if (vehicleType == 'Auto') {
+//       iconAsset = "assets/AutoLoction.png"; // Replace with the actual path of your auto image
+//     } else if (vehicleType == 'Car') {
+//       iconAsset = "assets/vehicleLocation.png"; // Replace with the actual path of your car image
+//     } else {
+//       iconAsset = "assets/vehicleLocation.png"; // Default icon
+//     }
+
+//     _mapController?.addSymbol(SymbolOptions(
+//       geometry: LatLng(latitude, longitude),
+//       iconImage: iconAsset,
+//       iconSize: 0.3, // Adjust the size as needed
+//     ));
+//   }
+//   @override
+// Widget build(BuildContext context) {
+//     final screenHeight = MediaQuery.of(context).size.height;
+//     final mapHeight = screenHeight * 0.3; 
+//   return Container(
+//     height: 300,
+//     width: double.infinity,
+//     decoration: BoxDecoration(
+//       borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+//       boxShadow: [
+//         BoxShadow(
+//           color: Colors.black.withOpacity(0.2), // Optional shadow for better visuals
+//           blurRadius: 10,
+//           offset: const Offset(0, 5),
+//         ),
+//       ],
+//     ),
+//     child: ClipRRect(
+//       borderRadius: BorderRadius.circular(20), // Same radius as the container
+//       child: MapboxMap(
+//         accessToken:
+//             "pk.eyJ1IjoicmFodWw5ODA5IiwiYSI6ImNtM2N0bG5tYjIwbG4ydnNjMXF3Zmt0Y2wifQ.P4kkM2eW7eTZT9Ntw6-JVQ", // Use your Mapbox token
+//         initialCameraPosition: CameraPosition(
+//           target: widget.latitude != null && widget.longitude != null
+//               ? LatLng(widget.latitude!, widget.longitude!)
+//               : const LatLng(9.968677, 76.318354),
+//           zoom: 14.0,
+//         ),
+//         gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+//           Factory<PanGestureRecognizer>(() => PanGestureRecognizer()),
+//           Factory<ScaleGestureRecognizer>(() => ScaleGestureRecognizer()),
+//           Factory<TapGestureRecognizer>(() => TapGestureRecognizer()),
+//           Factory<VerticalDragGestureRecognizer>(
+//               () => VerticalDragGestureRecognizer()),
+//         },
+//         onMapCreated: _onMapCreated,
+//         zoomGesturesEnabled: true, // Enable zoom gestures
+//         scrollGesturesEnabled: true, // Enable scroll gestures
+//         rotateGesturesEnabled: true, // Enable rotation gestures
+//         tiltGesturesEnabled: true, // Enable tilt gestures
+//         styleString:  MapboxStyles.MAPBOX_STREETS,
+//       ),
+//     ),
+//   );
+// }
+
+// }
+
+
+
+
+
 class MapContainerCard extends StatefulWidget {
   final double? latitude;
   final double? longitude;
@@ -325,29 +452,37 @@ class MapContainerCard extends StatefulWidget {
 class MapContainerCardState extends State<MapContainerCard> {
   MapboxMapController? _mapController;
   LatLng? _currentLocationMarker;
+
+  /// Called when the map is created
   void _onMapCreated(MapboxMapController controller) {
     _mapController = controller;
-    updateMapLocation(widget.latitude, widget.longitude);
+
+    if (widget.latitude != null && widget.longitude != null) {
+      updateMapLocation(widget.latitude, widget.longitude);
+    }
   }
 
   /// Updates map location only if it differs from the current marker location
-  void updateMapLocation(double? latitude, double? longitude) {
-    if (_mapController != null && latitude != null && longitude != null) {
-      LatLng newPosition = LatLng(latitude, longitude);
-      if (isCurrentLocationMarker(newPosition.latitude, newPosition.longitude)) {
-        return; // Skip if the new position matches the current marker
-      }
-
-      _currentLocationMarker = newPosition;
-      _mapController!.animateCamera(CameraUpdate.newLatLngZoom(newPosition, 14.0));
-
-      _mapController!.clearSymbols(); // Clear existing markers
-      _mapController!.addSymbol(SymbolOptions(
-        geometry: newPosition,
-        iconImage: "assets/liveLocation.png",
-        iconSize: 0.5,
-      ));
+  void updateMapLocation(double? latitude, double? longitude) async {
+    if (_mapController == null || latitude == null || longitude == null) {
+      return;
     }
+
+    LatLng newPosition = LatLng(latitude, longitude);
+    if (isCurrentLocationMarker(newPosition.latitude, newPosition.longitude)) {
+      return; // Skip if the new position matches the current marker
+    }
+
+    _currentLocationMarker = newPosition;
+
+    await _mapController!.animateCamera(CameraUpdate.newLatLngZoom(newPosition, 14.0));
+
+    await _mapController!.clearSymbols(); // Clear existing markers
+    await _mapController!.addSymbol(SymbolOptions(
+      geometry: newPosition,
+      iconImage: "assets/liveLocation.png",
+      iconSize: 0.5,
+    ));
   }
 
   /// Checks if the given latitude and longitude match the current marker's location
@@ -358,7 +493,7 @@ class MapContainerCardState extends State<MapContainerCard> {
   }
 
   /// Adds a driver marker with a specific vehicle type
-  void addDriverMarker(double latitude, double longitude, String vehicleType) {
+  void addDriverMarker(double latitude, double longitude, String vehicleType) async {
     String iconAsset;
     if (vehicleType == 'Auto') {
       iconAsset = "assets/AutoLoction.png"; // Replace with the actual path of your auto image
@@ -368,59 +503,65 @@ class MapContainerCardState extends State<MapContainerCard> {
       iconAsset = "assets/vehicleLocation.png"; // Default icon
     }
 
-    _mapController?.addSymbol(SymbolOptions(
+    await _mapController?.addSymbol(SymbolOptions(
       geometry: LatLng(latitude, longitude),
       iconImage: iconAsset,
       iconSize: 0.3, // Adjust the size as needed
     ));
   }
+
   @override
-Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final mapHeight = screenHeight * 0.3; 
-  return Container(
-    height: 300,
-    width: double.infinity,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.2), // Optional shadow for better visuals
-          blurRadius: 10,
-          offset: const Offset(0, 5),
-        ),
-      ],
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(20), // Same radius as the container
-      child: MapboxMap(
-        accessToken:
-            "pk.eyJ1IjoicmFodWw5ODA5IiwiYSI6ImNtM2N0bG5tYjIwbG4ydnNjMXF3Zmt0Y2wifQ.P4kkM2eW7eTZT9Ntw6-JVQ", // Use your Mapbox token
-        initialCameraPosition: CameraPosition(
-          target: widget.latitude != null && widget.longitude != null
-              ? LatLng(widget.latitude!, widget.longitude!)
-              : const LatLng(9.968677, 76.318354),
-          zoom: 14.0,
-        ),
-        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-          Factory<PanGestureRecognizer>(() => PanGestureRecognizer()),
-          Factory<ScaleGestureRecognizer>(() => ScaleGestureRecognizer()),
-          Factory<TapGestureRecognizer>(() => TapGestureRecognizer()),
-          Factory<VerticalDragGestureRecognizer>(
-              () => VerticalDragGestureRecognizer()),
-        },
-        onMapCreated: _onMapCreated,
-        zoomGesturesEnabled: true, // Enable zoom gestures
-        scrollGesturesEnabled: true, // Enable scroll gestures
-        rotateGesturesEnabled: true, // Enable rotation gestures
-        tiltGesturesEnabled: true, // Enable tilt gestures
-        styleString:  MapboxStyles.MAPBOX_STREETS,
+    final mapHeight = screenHeight * 0.3;
+
+    return Container(
+      height: 300,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2), // Optional shadow for better visuals
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
-    ),
-  );
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20), // Same radius as the container
+        child: MapboxMap(
+          accessToken:
+              "pk.eyJ1IjoicmFodWw5ODA5IiwiYSI6ImNtM2N0bG5tYjIwbG4ydnNjMXF3Zmt0Y2wifQ.P4kkM2eW7eTZT9Ntw6-JVQ", // Use your Mapbox token
+          initialCameraPosition: CameraPosition(
+            target: widget.latitude != null && widget.longitude != null
+                ? LatLng(widget.latitude!, widget.longitude!)
+                : const LatLng(9.968677, 76.318354),
+            zoom: 14.0,
+          ),
+          gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+            Factory<PanGestureRecognizer>(() => PanGestureRecognizer()),
+            Factory<ScaleGestureRecognizer>(() => ScaleGestureRecognizer()),
+            Factory<TapGestureRecognizer>(() => TapGestureRecognizer()),
+            Factory<VerticalDragGestureRecognizer>(
+                () => VerticalDragGestureRecognizer()),
+          },
+          onMapCreated: _onMapCreated,
+          zoomGesturesEnabled: true, // Enable zoom gestures
+          scrollGesturesEnabled: true, // Enable scroll gestures
+          rotateGesturesEnabled: true, // Enable rotation gestures
+          tiltGesturesEnabled: true, // Enable tilt gestures
+          styleString: MapboxStyles.MAPBOX_STREETS,
+        ),
+      ),
+    );
+  }
 }
 
-}
+
+
+
+
 
 class LoadingScreenDialog extends StatelessWidget {
   const LoadingScreenDialog({super.key});

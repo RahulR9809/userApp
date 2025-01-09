@@ -1,9 +1,14 @@
+
+
 // import 'package:flutter/foundation.dart';
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 // class UserChatSocketService {
 //   static final UserChatSocketService _instance = UserChatSocketService._internal();
 //   late IO.Socket socket;
+
+//   // Define a callback variable
+//   Function(Map<String, dynamic>)? onMessageReceivedCallback;
 
 //   // Factory constructor to return the singleton instance
 //   factory UserChatSocketService() {
@@ -18,15 +23,16 @@
 //     if (kDebugMode) {
 //       print('Initializing chat socket connection...');
 //     }
-//     socket = IO.io('http://192.168.24.158:3004', IO.OptionBuilder()
+//     socket = IO.io('http://10.0.2.2:3004', IO.OptionBuilder()
 //       .setTransports(['websocket'])
 //       .disableAutoConnect()
+//       .setPath('/socket.io/chat')
 //       .build());
 
 //     // Listen for connection events
 //     socket.onConnect((_) {
 //       if (kDebugMode) {
-//         print('chat Socket connected to server');
+//         print('Chat socket connected to server');
 //       }
 //     });
 
@@ -44,25 +50,26 @@
 //       }
 //     });
 
-//     // Handle messages from the server (optional)
+//     // Handle incoming messages directly and call the callback if available
 //     socket.on('latestMessage', (data) {
-//       if (kDebugMode) {
-//         print('Received message: $data');
+//       print('message from socketadasda:$data');
+//       if (data != null && onMessageReceivedCallback != null) {
+//         onMessageReceivedCallback!(data);
 //       }
 //     });
 //   }
 
 //   // Connect the socket
-//   void connectchatsocket(String userId) {
+//   void connectChatSocket(String tripId) {
 //     if (kDebugMode) {
-//       print('Attempting to connect with userId: $userId');
+//       print('Attempting to connect with tripId: $tripId');
 //     }
 //     socket.connect();
 
 //     socket.onConnect((_) {
-//       socket.emit('user-chat-connect', {'userId': userId});
+//       socket.emit('user-chat-connect', tripId);
 //       if (kDebugMode) {
-//         print('User ID sent to server: $userId');
+//         print('User ID sent to server: $tripId');
 //       }
 //     });
 //   }
@@ -78,6 +85,11 @@
 //     }
 //   }
 
+//   // Set a callback to handle incoming messages
+//   void setOnMessageReceivedCallback(Function(Map<String, dynamic>) callback) {
+//     onMessageReceivedCallback = callback;
+//   }
+// }
 
 
 
@@ -88,6 +100,9 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class UserChatSocketService {
   static final UserChatSocketService _instance = UserChatSocketService._internal();
   late IO.Socket socket;
+
+  // Define a callback variable
+  Function(Map<String, dynamic>)? onMessageReceivedCallback;
 
   // Factory constructor to return the singleton instance
   factory UserChatSocketService() {
@@ -102,9 +117,10 @@ class UserChatSocketService {
     if (kDebugMode) {
       print('Initializing chat socket connection...');
     }
-    socket = IO.io('http://192.168.24.58:3004', IO.OptionBuilder()
+    socket = IO.io('http://10.0.2.2:3004', IO.OptionBuilder()
       .setTransports(['websocket'])
       .disableAutoConnect()
+      .setPath('/socket.io/chat')
       .build());
 
     // Listen for connection events
@@ -128,26 +144,26 @@ class UserChatSocketService {
       }
     });
 
-    // Handle incoming messages
+    // Handle incoming messages directly and call the callback if available
     socket.on('latestMessage', (data) {
-      if (kDebugMode) {
-        print('Received message: $data');
+      print('message from socketadasda:$data');
+      if (data != null && onMessageReceivedCallback != null) {
+        onMessageReceivedCallback!(data);
       }
-      _handleIncomingMessage(data);
     });
   }
 
   // Connect the socket
-  void connectChatSocket(String userId) {
+  void connectChatSocket(String tripId) {
     if (kDebugMode) {
-      print('Attempting to connect with userId: $userId');
+      print('Attempting to connect with tripId: $tripId');
     }
     socket.connect();
 
     socket.onConnect((_) {
-      socket.emit('user-chat-connect', {'userId': userId});
+      socket.emit('user-chat-connect', tripId);
       if (kDebugMode) {
-        print('User ID sent to server: $userId');
+        print('User ID sent to server: $tripId');
       }
     });
   }
@@ -163,26 +179,13 @@ class UserChatSocketService {
     }
   }
 
-  // Handle incoming messages
-  void _handleIncomingMessage(dynamic data) {
-    if (data != null && data is Map<String, dynamic>) {
-      // Extract message and sender details
-      final String message = data['message'] ?? '';
-      final String senderId = data['senderId'] ?? '';
-      if (kDebugMode) {
-        print('Message from $senderId: $message');
-      }
-      // Notify the UI or BLoC about the new message
-      // Use a callback, event, or state management approach to pass this message
-    }
+  // Set a callback to handle incoming messages
+  void setOnMessageReceivedCallback(Function(Map<String, dynamic>) callback) {
+    onMessageReceivedCallback = callback;
   }
 
-  // Add a listener for incoming messages
-  void addMessageListener(Function(Map<String, dynamic>) onMessageReceived) {
-    socket.on('latestMessage', (data) {
-      if (data != null && data is Map<String, dynamic>) {
-        onMessageReceived(data);
-      }
-    });
-  }
+
+
+
+  
 }

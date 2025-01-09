@@ -131,3 +131,34 @@ class RideRequestVisible extends RidestartState {
   RideRequestVisible(this.requestData);
 }
 
+
+class RidestartRequestVisible extends RidestartState {
+  final Map<String, dynamic> requestData;
+
+  RidestartRequestVisible(this.requestData);
+}
+
+
+
+class DropSimulationState extends RidestartState {
+  final LatLng startLatLng; 
+  final LatLng endLatLng;  
+  final Map<String, dynamic> requestData;
+
+  DropSimulationState(this.requestData, {
+    required this.startLatLng,
+    required this.endLatLng,
+  });
+}
+
+
+class ChatConnected extends RidestartState{}
+
+class ChatLoading extends RidestartState{}
+
+
+  class ChatSocketConnectedstate extends RidestartState{
+final String driverId;
+
+  ChatSocketConnectedstate({required this.driverId});
+}

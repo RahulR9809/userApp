@@ -66,4 +66,19 @@ class RideRequestReceived extends RidestartEvent {
 }
 
 
+class CheckRideStartStatusEvent extends RidestartEvent {}
 
+
+class RideStartReceived  extends RidestartEvent {
+  final String rideData;
+
+  RideStartReceived(this.rideData);
+}
+
+
+
+class ChatSocketConnectedevent extends RidestartEvent{
+final String tripid;
+
+  ChatSocketConnectedevent({required this.tripid});
+}

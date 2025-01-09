@@ -376,6 +376,7 @@ import 'package:rideuser/Ridepage/searchpage.dart';
 import 'package:rideuser/controller/ride_controller.dart';
 import 'package:rideuser/core/colors.dart';
 import 'package:rideuser/widgets/auth_widgets.dart';
+import 'package:rideuser/widgets/currentlocation_map.dart';
 import 'package:rideuser/widgets/ride_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -403,9 +404,21 @@ class _RidePageState extends State<RidePage> {
   String? _selectedPaymentMethod;
   bool _isBottomBarVisible = false;
 
+
+  //   @override
+  // void initState() {
+  //   super.initState();
+  //   // Trigger the FetchCurrentLocation event when the page opens
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     BlocProvider.of<RideBloc>(context).add(
+  //       FetchCurrentLocation(context: context),
+  //     );
+  //   });
+  // }
+
 //clear this before hosting
-  double? _currentLatitude = 9.931233; // Default latitude
-  double? _currentLongitude = 76.267304; // Default longitude
+  double? _currentLatitude = 9.938034; // Default latitude
+  double? _currentLongitude = 76.321803; // Default longitude
   final String _defaultAddress =
       'Edathuruthikaran Holdings, 10/450-2, Kundannoor, Maradu, Ernakulam, Kerala 682304';
   @override
@@ -496,8 +509,9 @@ class _RidePageState extends State<RidePage> {
                               child: IconButton(
                                 iconSize: 36, // Make the icon larger
                                 onPressed: () {
-                                  BlocProvider.of<RideBloc>(context).add(
-                                      FetchCurrentLocation(context: context));
+                                  // BlocProvider.of<RideBloc>(context).add(
+                                  //     FetchCurrentLocation(context: context));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>MapPage()));
                                 },
                                 icon: const Icon(
                                   Icons.near_me,

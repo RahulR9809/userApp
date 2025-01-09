@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ChatService {
-  final String baseUrl='http://192.168.24.58:3001/api/chat';
+  final String baseUrl='http://10.0.2.2:3001/api/chat';
 
 Future<void> sendMessage({
   required String senderId,
@@ -17,12 +17,12 @@ Future<void> sendMessage({
     // Debug print
     print('Request Body: ${{
       "senderId": senderId,
-      "recieverId": recieverId,
+      "recieverId": tripId,
       "message": message,
       "tripId": tripId,
       "senderType": senderType,
-      "driverId": driverId,
-      "userId": userId,
+      "driverId": tripId,
+      "userId": tripId,
     }}');
 
     final response = await http.post(
@@ -37,7 +37,7 @@ Future<void> sendMessage({
         "tripId": tripId,
         "senderType": senderType,
         "driverId": driverId,
-        "userId": userId,
+        "userId": tripId,
       }),
     );
 
@@ -61,16 +61,19 @@ Future<void> sendMessage({
   }) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/chat/messages?tripId=$tripId'), // Example endpoint
+        Uri.parse('$baseUrl/messages/$tripId'), // Example endpoint
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        return data['messages']; // Assuming API returns {"messages": [...]}
+        final messages=data['messages']; 
+        print('this is the data :$messages');
+        return messages;
+        
       } else {
         print("Failed to fetch messages: ${response.body}");
         return [];

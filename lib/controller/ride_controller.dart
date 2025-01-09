@@ -124,8 +124,10 @@ class RideService {
         final data = jsonDecode(response.body);
         print(data);
         final tripId = data['tripdata']['_id'];
+        final userid=data['tripdata']['userId'];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('tripid', tripId);
+        prefs.setString('newUserId',userid);
         print('this is the tripid here$tripId');
         return data;
       } else {
