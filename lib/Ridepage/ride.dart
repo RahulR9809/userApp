@@ -3,6 +3,10 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_bloc.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_event.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_state.dart';
 import 'package:rideuser/Ridepage/RequestRide/request_ride.dart';
 import 'package:rideuser/chat/chat.dart';
 import 'package:rideuser/controller/chat_usersoketcontroller.dart';
@@ -17,15 +21,19 @@ class StartRide extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Always There\n to Take You Anywhere',
+          // ' Always There\n to Take You Anywhere',
+          'Electra',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
             color: ThemeColors.white,
           ),
         ),
+        // centerTitle: true,
         backgroundColor: ThemeColors.green,
-        elevation: 4,
+        leading: Container(),
+          centerTitle: false,
+
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -50,10 +58,19 @@ class StartRide extends StatelessWidget {
                   UserSocketService userSocketService = UserSocketService();
                   userSocketService.connectSocket(userId);
                  
-                   Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const RidePage()),
-                    );
+                  //  Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(builder: (context) => const RidePage()),
+                  //   );
+                  Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => BlocProvider(
+      create: (_) => RideBloc(),
+      child: RidePage(),
+    ),
+  ),
+);
 
                 } else {
                   if (kDebugMode) {

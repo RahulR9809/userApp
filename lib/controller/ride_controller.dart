@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:rideuser/controller/auth_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const userurl = '10.0.2.2';
 
 class RideService {
-  final String baseUrl = "http://$userurl:3001/api/trip/users/nearby-drivers";
+  final String baseUrl = "http://$ipconfig:3001/api/trip/users/nearby-drivers";
 
   Future<List<Map<String, dynamic>>> getNearByDrivers({
     required String userId,
@@ -77,7 +77,7 @@ class RideService {
     }
   }
 
-  final String apiUrl = 'http://$userurl:3001/api/trip/users/request-ride';
+  final String apiUrl = 'http://$ipconfig:3001/api/trip/users/request-ride';
 
   Future<Map<String, dynamic>> createRideRequest({
     required String userId,
@@ -158,7 +158,7 @@ class RideService {
 
     // API URL
     final url = Uri.parse(
-        'http://$userurl:3001/api/trip/users/pickup-location-autocomplete?search=$search');
+        'http://$ipconfig:3001/api/trip/users/pickup-location-autocomplete?search=$search');
 
     try {
       // Send GET request with Authorization header
@@ -206,7 +206,7 @@ class RideService {
 
   Future<bool> cancelRide(
       String userId, String tripId, String cancelReason) async {
-    final url = Uri.parse('http://$userurl:3001/api/trip/users/cancel-ride');
+    final url = Uri.parse('http://$ipconfig:3001/api/trip/users/cancel-ride');
   SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken =
         prefs.getString('emailtoken') ?? prefs.getString('googletoken');
@@ -238,4 +238,10 @@ class RideService {
       return false;
     }
   }
+
+
+
+
+
+
 }

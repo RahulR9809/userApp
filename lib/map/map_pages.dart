@@ -7,6 +7,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:quickalert/models/quickalert_type.dart';
 import 'package:rideuser/Ridepage/RideStart/bloc/ridestart_bloc.dart';
 import 'package:rideuser/widgets/ride_completedwidget.dart';
 
@@ -45,8 +46,8 @@ class MapboxPicupSimulation extends StatefulWidget {
   const MapboxPicupSimulation({
     required this.startPoint,
     required this.endPoint,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<MapboxPicupSimulation> createState() => _MapboxPicupSimulationState();
@@ -215,7 +216,7 @@ class _MapboxPicupSimulationState extends State<MapboxPicupSimulation>
     //     );
     //   },
     // );
-    ReachedDialog.showLocationReachedDialog(context,text:'Your driver is now at your location. Please be ready to begin your ride.',title: 'Driver Has Reached Your Location');
+    ReachedDialog.showLocationReachedDialog(context,text:'Your driver is now at your location. Please be ready to begin your ride.',title: 'Driver Has Reached Your Location',type: QuickAlertType.success);
   }
 
   @override
@@ -399,22 +400,8 @@ class _MapboxDropSimulationState extends State<MapboxDropSimulation>
   }
 
   void _triggerReachedAnimation() {
-    // showDialog(
-    //   context: context,
-    //   builder: (context) {
-    //     return Center(
-    //       child: ScaleTransition(
-    //         scale: _animationController,
-    //         child: Image.asset(
-    //           'assets/end.png',
-    //           width: 100,
-    //           height: 100,
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
-    ReachedDialog.showLocationReachedDialog(context,title: 'Location Reached!',text: 'You have arrived at your destination.');
+
+    ReachedDialog.showLocationReachedDialog(context,title: 'Location Reached!',text: 'You have arrived at your destination.',type: QuickAlertType.success);
   }
 
   @override

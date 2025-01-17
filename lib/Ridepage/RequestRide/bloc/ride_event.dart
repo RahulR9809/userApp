@@ -10,6 +10,15 @@ class FetchCurrentLocation extends RideEvent {
 }
 
 
+class FetchLocation extends RideEvent {
+  final double? latitude;
+  final double? longitude;
+  final String? address;
+
+  /// Constructor allows either fetching the current location (when null values) or a selected location.
+  FetchLocation({this.latitude, this.longitude, this.address});
+}
+
 class FetchSuggestions extends RideEvent {
   final String query;
 

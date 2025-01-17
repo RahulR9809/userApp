@@ -105,10 +105,34 @@ class _DestinationSearchFieldState extends State<DestinationSearchField> {
               });
               return const SizedBox.shrink();
             } else if (state is DestinationError) {
-              return Text(
-                state.error,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.red),
-              );
+              return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.wifi_off, size: 80, color: Colors.red),
+          const SizedBox(height: 20),
+          const Text(
+            'Unable to fetch destination.\nPlease check your internet connection.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, color: Colors.grey),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: (){
+                  if (_searchController.text.isNotEmpty) {
+                  BlocProvider.of<RideBloc>(context)
+                      .add(FetchSuggestions(_searchController.text));
+                }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+            child: const Text('Retry', style: TextStyle(fontSize: 16)),
+          ),
+        ],
+      ),
+    );
             }
             return const SizedBox.shrink();
           },

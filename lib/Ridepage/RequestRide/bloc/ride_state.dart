@@ -125,4 +125,3 @@ class BottomBarVisibilityChanged extends RideState {
   BottomBarVisibilityChanged({required this.isVisible});
 }
 
-

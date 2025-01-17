@@ -1,7 +1,5 @@
 
 import 'dart:async';
-
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -10,61 +8,37 @@ import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:rideuser/Ridepage/RideStart/bloc/ridestart_bloc.dart';
 import 'package:rideuser/chat/chat.dart';
 import 'package:rideuser/core/colors.dart';
+import 'package:rideuser/payment/pay.dart';
 
 
-// class ReachedDialog {
-//   static void showReachedDialog(BuildContext context) {
-//     AwesomeDialog(
-//       context: context,
-//       animType: AnimType.leftSlide,
-//       title: '🚖 Your Driver Has Arrived!',
-//       desc: 'Your driver has reached your pickup location.',
-//       headerAnimationLoop: false,
-//       customHeader: Icon(
-//         Icons.check_circle,
-//         color: Colors.green,
-//         size: 50,
-//       ),
-//       autoHide: Duration(seconds: 5),
-//       btnOkOnPress: () {},
-//     ).show();
-//   }
-// }
 
 
 
 class ReachedDialog {
-  static void showLocationReachedDialog(BuildContext context,{required String title, required String text}) {
+  static void showLocationReachedDialog(
+    BuildContext context, {
+    required QuickAlertType type,
+    required String title,
+    required String text,
+     Duration? autoCloseDuration,
+  }) {
     QuickAlert.show(
       context: context,
+      autoCloseDuration:autoCloseDuration ,
       barrierDismissible: false,
-      type: QuickAlertType.success,
+      type: type,
       title: title,
       text: text,
-      confirmBtnText: 'ok',
+      confirmBtnText: 'OK',
       onConfirmBtnTap: () {
         Navigator.of(context).pop();
       },
     );
   }
-
 }
 
 
-
-  //    void _showLocationReachedDialog(BuildContext context) {
-  //   QuickAlert.show(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     type: QuickAlertType.success,
-  //     title: 'Location Reached!',
-  //     text: 'You have arrived at your destination.',
-  //     confirmBtnText: 'Ride Completed',
-  //     onConfirmBtnTap: () {
-  //       Navigator.of(context).pop();
-  //     },
-  //   );
-  // }
+ 
 
 
 
@@ -467,7 +441,7 @@ class _RidestartedBottomBarState extends State<RidestartedBottomBar> {
         DateFormat('MMMM dd, yyyy \n hh:mm a').format(now);
 
     return SizedBox(
-      height: screenHeight * 0.7,
+      height: screenHeight * 0.8,
       child: DraggableScrollableSheet(
         initialChildSize: 0.3,
         minChildSize: 0.2,
@@ -611,6 +585,23 @@ class _RidestartedBottomBarState extends State<RidestartedBottomBar> {
                   ],
                 ),
                 const Divider(thickness: 1.5, height: 30),
+                ElevatedButton(
+            onPressed: () async {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>Paymentdetails(rideData:tripDetails ,)));
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.green,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+            child: const Text(
+              "Pay Now",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
               ],
             ),
           );

@@ -1,5 +1,6 @@
 
 import 'package:flutter/foundation.dart';
+import 'package:rideuser/controller/auth_controller.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class UserSocketService {
@@ -23,8 +24,8 @@ Map<String, dynamic> latestRidestartedData = {};
     if (kDebugMode) {
       print('Initializing socket connection...');
     }
-    socket = IO.io('http://10.0.2.2:3003', <String, dynamic>{
-      'path': '/socket.io/',
+    socket = IO.io('http://$ipconfig:3003', <String, dynamic>{
+      'path': '/socket.io/trip',
       'transports': ['websocket'],
       'autoConnect': false,
       'timeout': 5000,

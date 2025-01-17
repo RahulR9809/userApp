@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rideuser/payment/pay.dart';
 import 'package:rideuser/payment/payment.dart';
 import 'package:rideuser/customBottomNav/bloc/bottom_nav_bloc.dart';
 import 'package:rideuser/customBottomNav/nav_page.dart';
 import 'package:rideuser/Ridepage/ride.dart';
 import 'package:rideuser/profilepage/profile.dart';
+import 'package:rideuser/ride_details/ride_details.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -17,8 +19,8 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     const StartRide(),          // Your home page (index 0)
-    // const Homepage(),
-   PaymentPage(),
+    // const TripDetailPage(),
+    Paymentdetails(),
     const UserProfilePage(),   // Your profile page (index 2)
   ];
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:rideuser/controller/auth_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Map<String, dynamic>? userdata;
@@ -14,7 +15,7 @@ class ProfileService {
     final emailtoken =  prefs.getString('googletoken');
     final googletoken =  prefs.getString('emailtoken');
     final id = prefs.getString('userid');
-    const baseUrl = 'http://10.0.2.2:3001/api/auth/user/userProfileUpdate';
+    final baseUrl = 'http://$ipconfig:3001/api/auth/user/userProfileUpdate';
     final token = googletoken ?? emailtoken;
 
     if (token == null || id == null) {

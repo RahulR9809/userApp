@@ -123,6 +123,20 @@ class PaymentFailure extends RidestartState {
   PaymentFailure(this.error);
 }
 
+class CheckoutLoading extends RidestartState {}
+
+
+class CheckoutSuccess extends RidestartState {
+  // final String stripeUrl;
+
+  // CheckoutSuccess(this.stripeUrl);
+}
+
+class CheckoutFailure extends RidestartState {
+  final String errorMessage;
+
+  CheckoutFailure(this.errorMessage);
+}
 
 
 class RideRequestVisible extends RidestartState {
@@ -164,3 +178,16 @@ final String driverId;
   ChatSocketConnectedstate({required this.driverId});
 }
 
+
+
+class TripLoading extends RidestartState {}
+
+class TripLoaded extends RidestartState {
+  final Map<String, dynamic> tripDetails;
+
+  TripLoaded(this.tripDetails);}
+
+class TripError extends RidestartState {
+  final String message;
+  TripError(this.message);
+}

@@ -9,26 +9,15 @@ sealed class ChatEvent {}
 
 
 
-// class ChatSocketConnectedevent extends ChatEvent{
-// final String userid;
-
-//   ChatSocketConnectedevent({required this.userid});
-// }
-
-// class ChatSocketDisconnectedevent extends ChatEvent{}
-
 
 
 class MessageReceived extends ChatEvent {
   final String message;
   final String senderid;
+final String time;
 
-  MessageReceived(this.message,this.senderid);
+  MessageReceived(this.message,this.senderid,this .time);
 }
-
-
-
-
 
 class SendMessage extends ChatEvent {
   final String message;

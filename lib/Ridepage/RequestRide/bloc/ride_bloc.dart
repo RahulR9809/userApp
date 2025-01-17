@@ -1,4 +1,9 @@
 
+
+
+
+
+
 // Ride BLoC Implementation
 import 'dart:async';
 import 'dart:math';
@@ -22,7 +27,7 @@ class RideBloc extends Bloc<RideEvent, RideState> {
   bool _isBottomBarVisible = false;
 
   RideBloc() : super(RideInitial()) {
-    on<FetchCurrentLocation>(_onFetchCurrentLocation);
+    on<FetchLocation>(_onFetchCurrentLocation);
      on<FetchSuggestions>(_onFetchSuggestions);
     on<SelectSuggestion>(_onSelectSuggestion);
 
@@ -51,91 +56,50 @@ class RideBloc extends Bloc<RideEvent, RideState> {
   }
 
 
-  // Future<void> _onFetchCurrentLocation(
-  //     FetchCurrentLocation event, Emitter<RideState> emit) async {
-  //   emit(LocationLoading());
-
-  //   try {
-  //     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //     if (!serviceEnabled) {
-  //       throw Exception('Location services are disabled.');
-  //     }
-
-  //     LocationPermission permission = await Geolocator.checkPermission();
-  //     if (permission == LocationPermission.denied) {
-  //       permission = await Geolocator.requestPermission();
-  //       if (permission == LocationPermission.denied) {
-  //         throw Exception('Location permission denied.');
-  //       }
-  //     }
-
-  //     if (permission == LocationPermission.deniedForever) {
-  //       throw Exception(
-  //           'Location permissions are permanently denied. Please enable them in settings.');
-  //     }
-
-  //     Position position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.bestForNavigation,
-  //     );
-
-  //     List<Placemark> placemarks = await placemarkFromCoordinates(
-  //       position.latitude,
-  //       position.longitude,
-  //     );
-
-  //     if (placemarks.isNotEmpty) {
-  //       Placemark place = placemarks[0];
-  //       String address =
-  //           "${place.street ?? ''}, ${place.subLocality ?? ''}, ${place.locality ?? ''}, ${place.administrativeArea ?? ''}, ${place.country ?? ''}";
-
-  //       emit(LocationLoaded(
-  //        position.latitude,
-  //          position.longitude,
-  //         address,
-  //       ));
-  //     } else {
-  //       const SnackBar(content: Text('Turn on Location'));
-  //     }
-  //   } catch (e) {
-  //     DialogHelper.showCustomDialog(content:'please enable location service', title: 'warning', primaryButtonText: 'OK', context: event.context);
-  //     emit(LocationError('Error fetching location: $e'));
-  //   }
-  // }
-
-
-
-
-
-
-
  Future<void> _onFetchCurrentLocation(
-      FetchCurrentLocation event, Emitter<RideState> emit) async {
+    FetchLocation event,
+    Emitter<RideState> emit,
+  ) async {
     emit(LocationLoading());
-    try {
-      // Check location permission
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) throw Exception('Location services are disabled.');
 
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          throw Exception('Location permission denied.');
+    try {
+      double latitude;
+      double longitude;
+      String address;
+
+      // Check if the user selected a location
+      if (event.latitude != null && event.longitude != null) {
+        latitude = event.latitude!;
+        longitude = event.longitude!;
+      } else {
+        // If not, fetch the current location
+        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (!serviceEnabled) {
+          throw Exception('Location services are disabled.');
         }
+
+        LocationPermission permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+          if (permission == LocationPermission.denied) {
+            throw Exception('Location permission denied.');
+          }
+        }
+
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        latitude = position.latitude;
+        longitude = position.longitude;
       }
 
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      // Reverse geocoding to get address
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
-      String address = placemarks.isNotEmpty
+      // Reverse geocoding to get the address
+      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
+      address = placemarks.isNotEmpty
           ? "${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}"
           : "Unknown Location";
 
-      emit(LocationLoaded(position.latitude, position.longitude, address));
+      emit(LocationLoaded(latitude, longitude, address));
     } catch (e) {
       emit(LocationError('Error fetching location: $e'));
     }
@@ -144,6 +108,7 @@ class RideBloc extends Bloc<RideEvent, RideState> {
   // Handle updating location from MapPage
   void _onUpdateCurrentLocation(
       UpdateCurrentLocation event, Emitter<RideState> emit) {
+        print('Emitting loacation loa');
     emit(LocationLoaded(event.latitude, event.longitude, event.address));
   }
 

@@ -11,7 +11,10 @@
     android:name="${applicationName}"
     android:icon="@mipmap/ic_launcher"
     android:enableOnBackInvokedCallback="true"
-    android:usesCleartextTraffic="true">
+    android:usesCleartextTraffic="true"
+     android:hardwareAccelerated="true">
+
+    
         
         <!-- Flutter theme and launch activity -->
         <activity
@@ -44,10 +47,22 @@
         <!-- Mapbox Telemetry Receiver Export -->
         <receiver android:name="com.mapbox.android.telemetry.MapboxReceiver" android:exported="true"/>
 
+   <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="false" />
+
+<receiver
+    android:name="com.mapbox.android.telemetry.TelemetryReceiver"
+    android:exported="true" />
         <!-- Flutter plugin metadata -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+
+
+
+            
             
     </application>
 

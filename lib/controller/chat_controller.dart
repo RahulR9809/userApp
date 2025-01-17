@@ -1,8 +1,10 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:rideuser/controller/auth_controller.dart';
+
 class ChatService {
-  final String baseUrl='http://10.0.2.2:3001/api/chat';
+  final String baseUrl='http://$ipconfig:3001/api/chat';
 
 Future<void> sendMessage({
   required String senderId,

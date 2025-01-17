@@ -15,8 +15,9 @@ class UserProfilePage extends StatefulWidget {
   @override
   State<UserProfilePage> createState() => _UserProfilePageState();
 }
- final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 class _UserProfilePageState extends State<UserProfilePage> {
+   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   XFile? profileImage;
 
   @override

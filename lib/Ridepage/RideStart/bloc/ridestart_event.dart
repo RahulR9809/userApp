@@ -12,12 +12,30 @@ class RideAcceptedEvent extends RidestartEvent {
 class CheckRideStatusEvent extends RidestartEvent {}
 
 
+
+
+class CreateCheckoutSessionEvent extends RidestartEvent {
+  final String? userId;
+  final String? driverId;
+  final String? tripId;
+  final String? fare;
+  
+
+  CreateCheckoutSessionEvent({
+     this.userId,
+     this.driverId,
+     this.tripId,
+    required this.fare,
+  });
+}
+
+
 class MakePaymentEvent extends RidestartEvent {
   final String? userId;
   final String? tripId;
   final String? driverId;
   final String paymentMethod;
-  final double fare;
+  final String fare;
 
   MakePaymentEvent({
      this.userId,
@@ -84,3 +102,7 @@ final String tripid;
 }
 
 class ReachedButtonClickEvent extends RidestartEvent{}
+
+
+class GetTripDetailByIdEvent extends RidestartEvent {
+}
