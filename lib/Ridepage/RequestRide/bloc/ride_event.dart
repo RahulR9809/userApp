@@ -16,7 +16,7 @@ class FetchLocation extends RideEvent {
   final String? address;
 
   /// Constructor allows either fetching the current location (when null values) or a selected location.
-  FetchLocation({this.latitude, this.longitude, this.address});
+  FetchLocation({ this.latitude, this.longitude, this.address});
 }
 
 class FetchSuggestions extends RideEvent {
@@ -29,6 +29,25 @@ class SelectSuggestion extends RideEvent {
   final String address;
 
   SelectSuggestion(this.address);
+}
+class SelectDestination extends RideEvent {
+  final double latitude;
+  final double longitude;
+  final String address;
+
+  SelectDestination({
+    required this.latitude,
+    required this.longitude,
+    required this.address,
+  });
+}
+
+class UpdateDestination extends RideEvent {
+  final double latitude;
+  final double longitude;
+  final String address;
+
+  UpdateDestination(this.latitude, this.longitude, this.address);
 }
 
 
@@ -158,3 +177,9 @@ class UpdateCurrentLocation extends RideEvent {
     required this.address,
   });
 }
+
+
+
+
+
+

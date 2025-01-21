@@ -17,27 +17,12 @@ class RideStart extends StatefulWidget {
 
 class _RideStartState extends State<RideStart> {
   Map<String, dynamic>? _rideData;
-//   late ChatBloc _chatBloc;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _chatBloc = BlocProvider.of<ChatBloc>(context);
-//     _initializeChat();
-//   }
 
 
-
-//  Future<void> _initializeChat() async {
-//      SharedPreferences pref = await SharedPreferences.getInstance();
-//     final tripid= pref.getString('tripid')??'no trip id';
-
-//     _chatBloc.add(ChatSocketConnectedevent(userid: tripid));
-//   }
+ 
   @override
   Widget build(BuildContext context) {
-    // final screenHeight = MediaQuery.of(context).size.height;
-    // final screenWidth = MediaQuery.of(context).size.width;
+
 
     print("Building RideStart Screen");
 
@@ -55,17 +40,20 @@ class _RideStartState extends State<RideStart> {
                   endPoint: state.endLatLng,
                 );
               }
-              return MapboxWidget();
+              return MapboxLoading();
             },
           ),
           // 📋 Bottom Bar
           BlocBuilder<RidestartBloc, RidestartState>(
             builder: (context, state) {
-              if (state is RidestartInitial) {
-                return const Center(
-                  child: LoadingScreenDialog(),
-                );
-              } else if (state is PicUpSimulationState) {
+              // if (state is RidestartInitial) {
+              //   print('ride initial$state');
+              //   return const Center(
+              //     child: LoadingScreenDialog(),
+              //   );
+              // }
+              //  else
+                if (state is PicUpSimulationState) {
                 print('picup simulation state emitted');
                 _rideData = state.requestData;
                 print('this is the ridedata from picupsimulation state:$_rideData');

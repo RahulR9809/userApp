@@ -44,6 +44,15 @@ class AddressSelected extends RideState {
 
 
 
+class RideLocationUpdated extends RideState {
+  final double latitude;
+  final double longitude;
+  final String address;
+
+  RideLocationUpdated(this.latitude, this.longitude, this.address);
+}
+
+
 class DestinationError extends RideState {
   final String error;
 
@@ -124,4 +133,15 @@ class BottomBarVisibilityChanged extends RideState {
 
   BottomBarVisibilityChanged({required this.isVisible});
 }
+
+
+
+class LocationPermissionDenied extends RideState {
+  final String message;
+
+  LocationPermissionDenied(this.message);
+}
+
+
+
 

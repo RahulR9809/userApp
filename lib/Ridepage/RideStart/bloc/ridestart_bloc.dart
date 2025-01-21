@@ -20,6 +20,7 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
   RideService rideService = RideService();
   Map<String, dynamic>? _rideData;
   Map<String, dynamic>? rideData;
+  Map<String, dynamic>? rideDatas;
 
   RidestartBloc(this.socketService) : super(RidestartInitial()) {
     on<CheckRideStatusEvent>(_onCheckRideStatusEvent);
@@ -36,13 +37,20 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
       add(RideStartReceived(data));
     });
 
+    socketService.ridecompletedCallback((data) {
+      add(RideCompletedReceived(data));
+    });
+
+    on<RideCompletedStatusEvent>(_ridecompletedSuccess);
+
     on<RideStartReceived>(_onRidestartRequestReceived);
+    on<RideCompletedReceived>(_onRideCompletedRequestReceived);
+
     on<CheckRideStartStatusEvent>(_onCheckRideStartStatusEvent);
 
     on<CreateCheckoutSessionEvent>(_onCreateCheckoutSession);
 
-        on<GetTripDetailByIdEvent>(_onGetTripDetailByIdEvent);
-
+    on<GetTripDetailByIdEvent>(_onGetTripDetailByIdEvent);
   }
 
   Future<String?> _getDriverId() async {
@@ -65,22 +73,22 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
     return pref.getString('tripid');
   }
 
- Future<String?> _getpaymentId() async {
+  Future<String?> _getpaymentId() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getString('paymentid');
   }
 
   FutureOr<void> _onCreateCheckoutSession(
-      CreateCheckoutSessionEvent event, Emitter<RidestartState> emit)async{
-        emit(CheckoutLoading());
-            String? driverId = await _getDriverId();
+      CreateCheckoutSessionEvent event, Emitter<RidestartState> emit) async {
+    emit(CheckoutLoading());
+    String? driverId = await _getDriverId();
     String? userId = await _getUserId();
     String? tripId = await _getTripId();
     try {
       final url = await paymentController.createCheckoutSession(
         userId: userId!,
-        driverId:driverId!,
-        tripId:tripId!,
+        driverId: driverId!,
+        tripId: tripId!,
         fare: event.fare!,
       );
       if (kDebugMode) {
@@ -90,7 +98,7 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
     } catch (e) {
       emit(CheckoutFailure(e.toString()));
     }
-      }
+  }
 
   Future<void> _Confirmpayment(
       MakePaymentEvent event, Emitter<RidestartState> emit) async {
@@ -113,7 +121,7 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
         driverId: driverId,
         paymentMethod: event.paymentMethod,
         fare: event.fare,
-         sessionId: paymentid!,
+        sessionId: paymentid!,
       );
       print('the response is $response');
       emit(PaymentSuccess(response));
@@ -135,6 +143,14 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
     emit(RidestartRequestVisible(event.rideData));
     add(CheckRideStartStatusEvent());
   }
+
+
+  FutureOr<void> _onRideCompletedRequestReceived(
+      RideCompletedReceived event, Emitter<RidestartState> emit) {
+        rideDatas=event.rideData;
+        add(RideCompletedStatusEvent());
+  }
+
 
   Future<void> _onCheckRideStatusEvent(
       CheckRideStatusEvent event, Emitter<RidestartState> emit) async {
@@ -292,18 +308,17 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
     }
   }
 
-
-
- Future<void> _onGetTripDetailByIdEvent(
+  Future<void> _onGetTripDetailByIdEvent(
       GetTripDetailByIdEvent event, Emitter<RidestartState> emit) async {
     emit(TripLoading());
     try {
-          String? tripId = await _getTripId();
+      String? tripId = await _getTripId();
 
-     final response=  await paymentController.getTripDetailById(tripId!);
+      final response = await paymentController.getTripDetailById(tripId!);
 
-      if (response!=null) {
-        emit(TripLoaded(response)); // Emit TripLoaded state with the fetched data
+      if (response != null) {
+        emit(TripLoaded(
+            response)); // Emit TripLoaded state with the fetched data
       } else {
         emit(TripError('Failed to load trip details'));
       }
@@ -313,4 +328,9 @@ class RidestartBloc extends Bloc<RidestartEvent, RidestartState> {
   }
 
 
+
+  FutureOr<void> _ridecompletedSuccess(RideCompletedStatusEvent event, Emitter<RidestartState> emit) {
+  print('ride completed state emitting ');
+    emit(RideCompletedState());
+  }
 }

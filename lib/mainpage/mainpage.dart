@@ -5,6 +5,7 @@ import 'package:rideuser/payment/payment.dart';
 import 'package:rideuser/customBottomNav/bloc/bottom_nav_bloc.dart';
 import 'package:rideuser/customBottomNav/nav_page.dart';
 import 'package:rideuser/Ridepage/ride.dart';
+import 'package:rideuser/payment/payment_completed.dart';
 import 'package:rideuser/profilepage/profile.dart';
 import 'package:rideuser/ride_details/ride_details.dart';
 
@@ -21,6 +22,7 @@ class _MainPageState extends State<MainPage> {
     const StartRide(),          // Your home page (index 0)
     // const TripDetailPage(),
     Paymentdetails(),
+    // PaymentCompletedPage(),
     const UserProfilePage(),   // Your profile page (index 2)
   ];
 

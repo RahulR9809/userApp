@@ -102,7 +102,7 @@ import 'package:rideuser/controller/auth_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentController {
-  late final String baseUrl = 'http://$ipconfig:3005/api/payment/user';
+  late final String baseUrl = 'http://$ipconfig:3001/api/payment/user';
 
   // Create Stripe Checkout Session
   Future<dynamic> createCheckoutSession({

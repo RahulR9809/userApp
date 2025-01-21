@@ -191,3 +191,8 @@ class TripError extends RidestartState {
   final String message;
   TripError(this.message);
 }
+
+
+
+
+class RideCompletedState extends RidestartState{}

@@ -9,7 +9,10 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:rideuser/Ridepage/RideStart/bloc/ridestart_bloc.dart';
+import 'package:rideuser/map/bloc/animation_state_bloc.dart';
+import 'package:rideuser/payment/pay.dart';
 import 'package:rideuser/widgets/ride_completedwidget.dart';
+import 'package:rideuser/widgets/ride_widget.dart';
 
 class MapboxWidget extends StatelessWidget {
   const MapboxWidget({super.key});
@@ -30,6 +33,41 @@ class MapboxWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+
+class MapboxLoading extends StatelessWidget {
+  const MapboxLoading({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Map View
+        FlutterMap(
+          children: [
+            TileLayer(
+              urlTemplate:
+                  "https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicmFodWw5ODA5IiwiYSI6ImNtM2N0bG5tYjIwbG4ydnNjMXF3Zmt0Y2wifQ.P4kkM2eW7eTZT9Ntw6-JVQ",
+              additionalOptions: const {
+                'access_token':
+                    'pk.eyJ1IjoicmFodWw5ODA5IiwiYSI6ImNtM2N0bG5tYjIwbG4ydnNjMXF3Zmt0Y2wifQ.P4kkM2eW7eTZT9Ntw6-JVQ',
+              },
+            ),
+          ],
+        ),
+        // Loading Overlay
+        Positioned.fill(
+          child: Container(
+            color: Colors.black.withOpacity(0.5), // Semi-transparent background
+            child: const Center(
+              child: LoadingScreenDialog(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -401,7 +439,12 @@ class _MapboxDropSimulationState extends State<MapboxDropSimulation>
 
   void _triggerReachedAnimation() {
 
-    ReachedDialog.showLocationReachedDialog(context,title: 'Location Reached!',text: 'You have arrived at your destination.',type: QuickAlertType.success);
+    ReachedDialog.showLocationReachedDialog(context,title: 'Location Reached!',text: 'You have arrived at your destination.',type: QuickAlertType.success,onConfirm: (){
+            context.read<AnimationStateBloc>().add(AnimationCompleted());
+
+    });
+ 
+
   }
 
   @override

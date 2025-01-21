@@ -18,7 +18,7 @@
 
 // void main() async {
 //   WidgetsFlutterBinding
-//       .ensureInitialized(); 
+//       .ensureInitialized();
 // UserChatSocketService userChatSocketService=UserChatSocketService();
 //   UserSocketService userSocketService = UserSocketService();
 //   userSocketService.initializeSocket();
@@ -52,7 +52,7 @@
 //                 BlocProvider(create: (context) => ChatBloc()),
 
 //       ],
-//       child: 
+//       child:
 //       BlocListener<AuthBloc, AuthState>(
 //         listener: (context, state) async {
 //           if (state is GoogleAuthenticatedState ||
@@ -95,8 +95,6 @@
 //   }
 // }
 
-
-
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:rideuser/Ridepage/RequestRide/bloc/ride_bloc.dart';
@@ -115,7 +113,7 @@
 // final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 // void main() async {
-//   WidgetsFlutterBinding.ensureInitialized(); 
+//   WidgetsFlutterBinding.ensureInitialized();
 //   UserChatSocketService userChatSocketService = UserChatSocketService();
 //   UserSocketService userSocketService = UserSocketService();
 //   ChatBloc _chatBloc=ChatBloc();
@@ -123,7 +121,7 @@
 //   // Initialize sockets
 //   userSocketService.initializeSocket();
 //   userChatSocketService.initializeChatSocket();
-  
+
 //   runApp(const MyApp());
 // }
 // class MyApp extends StatelessWidget {
@@ -150,7 +148,7 @@
 //       child: BlocListener<AuthBloc, AuthState>(
 //         listener: (context, state) async {
 //           print('Current Auth State: $state');
-          
+
 //           if (state is GoogleAuthenticatedState || state is EmailAuthenticatedState) {
 //             context.read<BottomNavBloc>().add(UpdateTab(0));
 //             print('Navigating to MainPage...');
@@ -160,7 +158,7 @@
 //           } else if (state is LoginLoading) {
 //             print('Login is in progress...');
 //             // Optionally, show a loading spinner here if needed
-//           } 
+//           }
 //         },
 //         child: MaterialApp(
 //           navigatorKey: navigatorKey,
@@ -170,7 +168,7 @@
 //               return BlocBuilder<AuthBloc, AuthState>(
 //                 builder: (context, state) {
 //                   print('AuthBloc State: $state');
-                  
+
 //                   if (state is LoginLoading) {
 //                     // Show a loading spinner when login is in progress
 //                     return const Scaffold(
@@ -193,10 +191,6 @@
 //   }
 // }
 
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rideuser/Ridepage/RequestRide/bloc/ride_bloc.dart';
@@ -206,6 +200,7 @@ import 'package:rideuser/controller/chat_usersoketcontroller.dart';
 import 'package:rideuser/controller/user_socket.dart';
 import 'package:rideuser/customBottomNav/bloc/bottom_nav_bloc.dart';
 import 'package:rideuser/mainpage/mainpage.dart';
+import 'package:rideuser/map/bloc/animation_state_bloc.dart';
 import 'package:rideuser/profilepage/bloc/profile_bloc.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -218,7 +213,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   UserChatSocketService userChatSocketService = UserChatSocketService();
   UserSocketService userSocketService = UserSocketService();
-  
+
   userSocketService.initializeSocket();
   userChatSocketService.initializeChatSocket();
 
@@ -237,7 +232,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) =>
-              AuthBloc(authService: authService, context: context)..add(CheckAuthStatusEvent()),
+              AuthBloc(authService: authService, context: context)
+                ..add(CheckAuthStatusEvent()),
         ),
         BlocProvider(create: (context) => ProfileBloc()),
         BlocProvider(create: (context) => BottomNavBloc()),
@@ -245,6 +241,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => RideBloc()),
         BlocProvider(create: (context) => RidestartBloc(socketService)),
         BlocProvider(create: (context) => ChatBloc()),
+        BlocProvider(create: (context) => AnimationStateBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -271,20 +268,19 @@ class MyApp extends StatelessWidget {
         //   },
         // ),
 
-
         home: BlocListener<AuthBloc, AuthState>(
-  listener: (context, state) {
-    if (state is GoogleAuthenticatedState || state is EmailAuthenticatedState) {
-      context.read<BottomNavBloc>().add(UpdateTab(0));
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MainPage()),
-      );
-    }
-  },
-  child: const Intropage(),
-),
-
+          listener: (context, state) {
+            if (state is GoogleAuthenticatedState ||
+                state is EmailAuthenticatedState) {
+              context.read<BottomNavBloc>().add(UpdateTab(0));
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => MainPage()),
+              );
+            }
+          },
+          child: const Intropage(),
+        ),
       ),
     );
   }

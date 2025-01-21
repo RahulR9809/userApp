@@ -2,15 +2,20 @@
 
 // ignore_for_file: unused_local_variable
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_bloc.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_event.dart';
+import 'package:rideuser/Ridepage/RequestRide/bloc/ride_state.dart';
 import 'package:rideuser/core/colors.dart';
 
 
@@ -218,13 +223,55 @@ class VehicleCard extends StatelessWidget {
 
 
 
+// Widget buildLocationInputField({
+//   required BuildContext context,
+//   required String label,
+//   required TextEditingController controller,
+//   required String hint,
+// }) {
+//   final screenWidth = MediaQuery.of(context).size.width;
+
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       Text(
+//         label,
+//         style: TextStyle(
+//           fontSize: screenWidth * 0.05, // Adjust font size based on screen width
+//           fontWeight: FontWeight.w600,
+//           color: ThemeColors.darkGrey,
+//         ),
+//       ),
+//       const SizedBox(height: 10),
+//       TextField(
+//         controller: controller,
+//         style: const TextStyle(color: ThemeColors.darkGrey), // Set text color to white
+//         decoration: InputDecoration(
+//           hintText: hint,
+//           hintStyle: const TextStyle(color: ThemeColors.grey),
+//           border: OutlineInputBorder(
+//             borderSide: const BorderSide(color: ThemeColors.darkGrey,),
+//             borderRadius: BorderRadius.circular(20),
+//           ),
+//         ),
+//       ),
+//     ],
+//   );
+// }
+
+
+
+
+
 Widget buildLocationInputField({
   required BuildContext context,
   required String label,
   required TextEditingController controller,
   required String hint,
+  required Function(double, double, String) onLocationSelected,
 }) {
   final screenWidth = MediaQuery.of(context).size.width;
+  Timer? _debounce;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,19 +287,115 @@ Widget buildLocationInputField({
       const SizedBox(height: 10),
       TextField(
         controller: controller,
-        style: const TextStyle(color: ThemeColors.darkGrey), // Set text color to white
+        style: const TextStyle(color: ThemeColors.darkGrey), // Set text color
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: ThemeColors.grey),
           border: OutlineInputBorder(
-            borderSide: const BorderSide(color: ThemeColors.darkGrey,),
+            borderSide: const BorderSide(color: ThemeColors.darkGrey),
             borderRadius: BorderRadius.circular(20),
           ),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.search, color: ThemeColors.darkGrey),
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                BlocProvider.of<RideBloc>(context).add(FetchSuggestions(controller.text));
+              }
+            },
+          ),
         ),
+        onChanged: (text) {
+          if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+          if (text.isNotEmpty) {
+            _debounce = Timer(const Duration(seconds: 3), () {
+              BlocProvider.of<RideBloc>(context).add(FetchSuggestions(text));
+            });
+          }
+        },
+      ),
+      const SizedBox(height: 10),
+      BlocBuilder<RideBloc, RideState>(
+        builder: (context, state) {
+          if (state is SuggestionsLoading) {
+            return const LinearProgressIndicator();
+          } else if (state is SuggestionsLoaded) {
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: state.suggestions.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                    state.suggestions[index],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: ThemeColors.darkGrey,
+                    ),
+                  ),
+                  onTap: () {
+                    BlocProvider.of<RideBloc>(context).add(SelectSuggestion(state.suggestions[index]));
+                  },
+                );
+              },
+            );
+          } else if (state is AddressSelected) {
+            // Update the text field when the address is selected
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              controller.text = state.address;
+              onLocationSelected(state.latitude, state.longitude, state.address);
+            });
+            return const SizedBox.shrink();
+          } else if (state is DestinationError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.wifi_off, size: 80, color: Colors.red),
+                  const SizedBox(height: 20),
+                  Text(
+                    'An error occurred',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (controller.text.isNotEmpty) {
+                        BlocProvider.of<RideBloc>(context).add(FetchSuggestions(controller.text));
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                    child: const Text('Retry', style: TextStyle(fontSize: 16)),
+                  ),
+                ],
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     ],
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   // lib/services/location_service.da

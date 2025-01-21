@@ -93,6 +93,11 @@ class RideStartReceived  extends RidestartEvent {
   RideStartReceived(this.rideData);
 }
 
+class RideCompletedReceived  extends RidestartEvent {
+  final Map<String, dynamic>  rideData;
+
+  RideCompletedReceived(this.rideData);
+}
 
 
 class ChatSocketConnectedevent extends RidestartEvent{
@@ -106,3 +111,5 @@ class ReachedButtonClickEvent extends RidestartEvent{}
 
 class GetTripDetailByIdEvent extends RidestartEvent {
 }
+
+class RideCompletedStatusEvent extends RidestartEvent{}

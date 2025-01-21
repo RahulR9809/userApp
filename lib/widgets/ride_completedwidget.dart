@@ -8,6 +8,7 @@ import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:rideuser/Ridepage/RideStart/bloc/ridestart_bloc.dart';
 import 'package:rideuser/chat/chat.dart';
 import 'package:rideuser/core/colors.dart';
+import 'package:rideuser/map/bloc/animation_state_bloc.dart';
 import 'package:rideuser/payment/pay.dart';
 
 
@@ -21,6 +22,8 @@ class ReachedDialog {
     required String title,
     required String text,
      Duration? autoCloseDuration,
+         VoidCallback? onConfirm,
+
   }) {
     QuickAlert.show(
       context: context,
@@ -31,7 +34,13 @@ class ReachedDialog {
       text: text,
       confirmBtnText: 'OK',
       onConfirmBtnTap: () {
+        // Pop the dialog first
         Navigator.of(context).pop();
+
+        // Safely call onConfirm if it's provided
+        if (onConfirm != null) {
+          onConfirm();
+        }
       },
     );
   }
@@ -585,9 +594,16 @@ class _RidestartedBottomBarState extends State<RidestartedBottomBar> {
                   ],
                 ),
                 const Divider(thickness: 1.5, height: 30),
-                ElevatedButton(
+       
+
+BlocBuilder<AnimationStateBloc, AnimationState>(
+  builder: (context, state) {
+    return state.isAnimationComplete
+        ? ElevatedButton(
             onPressed: () async {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>Paymentdetails(rideData:tripDetails ,)));
+       context.read<AnimationStateBloc>().add(ResetAnimation());
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Paymentdetails(rideData:tripDetails ,)));
+
             },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
@@ -602,6 +618,11 @@ class _RidestartedBottomBarState extends State<RidestartedBottomBar> {
               ),
             ),
           )
+        : const SizedBox(); // Hide button when animation is not complete
+  },
+),
+
+
               ],
             ),
           );

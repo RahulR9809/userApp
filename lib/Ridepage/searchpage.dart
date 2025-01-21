@@ -7,33 +7,27 @@ import 'package:rideuser/Ridepage/RequestRide/bloc/ride_state.dart';
 import 'dart:async';
 
 import 'package:rideuser/core/colors.dart';
+
+// // DestinationSearchField.dart
 class DestinationSearchField extends StatefulWidget {
   final Function(double, double, String) onLocationSelected;
 
   const DestinationSearchField({super.key, required this.onLocationSelected});
 
   @override
-  // ignore: library_private_types_in_public_api
   _DestinationSearchFieldState createState() => _DestinationSearchFieldState();
 }
+
 
 class _DestinationSearchFieldState extends State<DestinationSearchField> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    _debounce?.cancel(); // Cancel debounce timer when disposed
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Updated Label with Desired Style
         const Text(
           'Choose Destination',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: ThemeColors.darkGrey),
@@ -41,31 +35,33 @@ class _DestinationSearchFieldState extends State<DestinationSearchField> {
         const SizedBox(height: 10),
         TextField(
           controller: _searchController,
-            style: const TextStyle(color: ThemeColors.darkGrey), // Set text color to white
-
+          style: const TextStyle(color: ThemeColors.darkGrey),
           decoration: InputDecoration(
-            hintText: 'Enter destination',hintStyle:const TextStyle(color: ThemeColors.lightGrey),
+            hintText: 'Enter destination',
+            hintStyle: const TextStyle(color: ThemeColors.lightGrey),
             border: OutlineInputBorder(
               borderSide: const BorderSide(color: ThemeColors.darkGrey),
               borderRadius: BorderRadius.circular(20),
             ),
             suffixIcon: IconButton(
-              icon: const Icon(Icons.search,color: ThemeColors.darkGrey,),
+              icon: const Icon(Icons.search, color: ThemeColors.darkGrey),
               onPressed: () {
                 if (_searchController.text.isNotEmpty) {
-                  BlocProvider.of<RideBloc>(context)
-                      .add(FetchSuggestions(_searchController.text));
+                  BlocProvider.of<RideBloc>(context).add(FetchSuggestions(_searchController.text));
                 }
               },
             ),
           ),
           onChanged: (text) {
-            if (_debounce?.isActive ?? false) _debounce?.cancel();
-            _debounce = Timer(const Duration(seconds: 2), () {
-              if (text.isNotEmpty) {
+            // Cancel any previous debounce timer
+            if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+            // Start a new debounce timer
+            if (text.isNotEmpty) {
+              _debounce = Timer(const Duration(seconds: 3), () {
                 BlocProvider.of<RideBloc>(context).add(FetchSuggestions(text));
-              }
-            });
+              });
+            }
           },
         ),
         const SizedBox(height: 10),
@@ -84,60 +80,57 @@ class _DestinationSearchFieldState extends State<DestinationSearchField> {
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: ThemeColors.darkGrey),
                     ),
                     onTap: () {
-                      BlocProvider.of<RideBloc>(context)
-                          .add(SelectSuggestion(state.suggestions[index]));
+                      BlocProvider.of<RideBloc>(context).add(SelectSuggestion(state.suggestions[index]));
                     },
                   );
                 },
               );
             } else if (state is AddressSelected) {
+              // Update the text field when the address is selected
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (_searchController.text != state.address) {
-                  setState(() {
-                    _searchController.text = state.address; 
-                  });
-                }
-                widget.onLocationSelected(
-                  state.latitude,
-                  state.longitude,
-                  state.address,
-                );
+                _searchController.text = state.address;
+                widget.onLocationSelected(state.latitude, state.longitude, state.address);
               });
               return const SizedBox.shrink();
             } else if (state is DestinationError) {
               return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.wifi_off, size: 80, color: Colors.red),
-          const SizedBox(height: 20),
-          const Text(
-            'Unable to fetch destination.\nPlease check your internet connection.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, color: Colors.grey),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: (){
-                  if (_searchController.text.isNotEmpty) {
-                  BlocProvider.of<RideBloc>(context)
-                      .add(FetchSuggestions(_searchController.text));
-                }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
-            child: const Text('Retry', style: TextStyle(fontSize: 16)),
-          ),
-        ],
-      ),
-    );
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.wifi_off, size: 80, color: Colors.red),
+                    const SizedBox(height: 20),
+                    Text(
+                      'An error occurred',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_searchController.text.isNotEmpty) {
+                          BlocProvider.of<RideBloc>(context).add(FetchSuggestions(_searchController.text));
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      ),
+                      child: const Text('Retry', style: TextStyle(fontSize: 16)),
+                    ),
+                  ],
+                ),
+              );
             }
             return const SizedBox.shrink();
           },
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();  // Cancel the timer when the widget is disposed
+    super.dispose();
   }
 }
