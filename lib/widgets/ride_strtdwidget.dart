@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:rideuser/Ridepage/RequestRide/bloc/ride_bloc.dart';
-import 'package:rideuser/Ridepage/RequestRide/bloc/ride_event.dart';
-import 'package:rideuser/Ridepage/RequestRide/bloc/ride_state.dart';
-import 'package:rideuser/chat/chat.dart';
+import 'package:rideuser/features/ride/bloc/RequestRide/bloc/ride_bloc.dart';
+import 'package:rideuser/features/ride/bloc/RequestRide/bloc/ride_event.dart';
+import 'package:rideuser/features/ride/bloc/RequestRide/bloc/ride_state.dart';
 import 'package:rideuser/core/colors.dart';
 import 'package:rideuser/widgets/ride_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// Replace with your actual BLoC file
 
 class BottomBarWidget extends StatelessWidget {
   final RideController rideController;
@@ -44,7 +42,7 @@ class BottomBarWidget extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
               blurRadius: 10,
-              offset: Offset(0, -4),
+              offset: const Offset(0, -4),
             ),
           ],
           borderRadius: const BorderRadius.only(
@@ -54,14 +52,14 @@ class BottomBarWidget extends StatelessWidget {
         ),
         child: BlocBuilder<RideBloc, RideState>(
           builder: (context, state) {
-            String? _selectedVehicleType;
-            String? _selectedPaymentMethod;
+            String? selectedVehicleType;
+            String? selectedPaymentMethod;
 
             if (state is VehicleSelected) {
-              _selectedVehicleType = state.vehicleType;
+              selectedVehicleType = state.vehicleType;
             }
             if (state is PaymentSelected) {
-              _selectedPaymentMethod = state.paymentMethod;
+              selectedPaymentMethod = state.paymentMethod;
             }
 
             return Column(
@@ -83,7 +81,7 @@ class BottomBarWidget extends StatelessWidget {
                     _buildCard(
                       icon: Icons.directions_car,
                       label: 'Car(4 Seater)',
-                      isSelected: _selectedVehicleType == 'Car',
+                      isSelected: selectedVehicleType == 'Car',
                       onTap: () {
                         BlocProvider.of<RideBloc>(context)
                             .add(SelectVehicle(vehicleType: 'Car'));
@@ -93,7 +91,7 @@ class BottomBarWidget extends StatelessWidget {
                     _buildCard(
                       icon: Icons.electric_rickshaw,
                       label: 'Auto(3 Seater)',
-                      isSelected: _selectedVehicleType == 'Auto',
+                      isSelected: selectedVehicleType == 'Auto',
                       onTap: () {
                         BlocProvider.of<RideBloc>(context)
                             .add(SelectVehicle(vehicleType: 'Auto'));
@@ -128,7 +126,7 @@ class BottomBarWidget extends StatelessWidget {
                     _buildCard(
                       icon: Icons.credit_card,
                       label: 'Online Payment',
-                      isSelected: _selectedPaymentMethod == 'Online-Payment',
+                      isSelected: selectedPaymentMethod == 'Online-Payment',
                       onTap: () {
                         BlocProvider.of<RideBloc>(context).add(
                             SelectPayment(paymentMethod: 'Online-Payment'));
@@ -170,11 +168,11 @@ class BottomBarWidget extends StatelessWidget {
                           destinationLatitude,
                           destinationLongitude
                         ],
-                        vehicleType: _selectedVehicleType ?? 'Car',
+                        vehicleType: selectedVehicleType ?? 'Car',
                         pickupLocation: currentLocationController.text,
                         dropLocation: destinationController.text,
                         paymentMethod:
-                            _selectedPaymentMethod ?? 'Online-Payment',
+                            selectedPaymentMethod ?? 'Online-Payment',
                       ));
                     },
                     child: const Text(
@@ -210,7 +208,7 @@ class BottomBarWidget extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
               blurRadius: 6,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -249,7 +247,7 @@ class BottomBarWidget extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 6,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -271,5 +269,10 @@ class BottomBarWidget extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
 
 

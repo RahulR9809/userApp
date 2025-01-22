@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
-// TextFormField with focus and unfocus colors
 Widget buildTextField({
   required String hintText,
   required TextEditingController controller,
   Icon? prefixIcon,
-  String? Function(String?)? validator, // Added validator as a parameter
+  String? Function(String?)? validator,
 }) {
   return TextFormField(
     controller: controller,
@@ -31,11 +30,10 @@ Widget buildTextField({
       ),
     ),
     style: const TextStyle(color: Colors.black),
-    validator: validator, // Use the passed validator function
+    validator: validator, 
   );
 }
 
-// Reusable AuthButton
 
 Widget authbutton(
   BuildContext context,
@@ -111,7 +109,6 @@ class ReusableButton extends StatelessWidget {
   }
 }
 
-// Reusable Button Widget
 class CustomTextButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;

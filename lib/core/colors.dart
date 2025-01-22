@@ -1,36 +1,11 @@
 
-// import 'package:flutter/material.dart';
-
-// class ThemeColors {
-//     static const Color green = Color(0xFF28A745); 
-
-//     static const Color lightwhite = Color(0xFFF3F3F3); 
-
-//   static const Color darkgrey = Color(0xFF2C2C2C); 
-//   static const Color electricBlue = Color(0xFF00E5FF); 
-//     static const Color lightgrey = Color.fromARGB(255, 189, 189, 189); 
-//         static const Color black = Colors.black; 
-//         static const Color white = Colors.white; 
-//         static const Color grey = Colors.grey; 
-//         static const Color lightgreen = Color.fromARGB(255, 111, 200, 114); 
-//         static const Color red = Colors.red; 
-//         static const Color orange = Colors.orange; 
-
-// }
-
-
-
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class ThemeColors {
-  // Primary Colors
   static const Color green = Color(0xFF28A745);
   static const Color lightGreen = Color(0xFF6FC872); 
   static const Color electricBlue = Color(0xFF00E5FF); 
 
-  // Background and Neutral Colors
   static const Color lightWhite = Color(0xFFF3F4F6); 
   static const Color white = Colors.white; 
   static const Color black = Colors.black; 

@@ -13,9 +13,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:rideuser/Ridepage/RequestRide/bloc/ride_bloc.dart';
-import 'package:rideuser/Ridepage/RequestRide/bloc/ride_event.dart';
-import 'package:rideuser/Ridepage/RequestRide/bloc/ride_state.dart';
+import 'package:rideuser/features/ride/bloc/RequestRide/bloc/ride_bloc.dart';
+import 'package:rideuser/features/ride/bloc/RequestRide/bloc/ride_event.dart';
+import 'package:rideuser/features/ride/bloc/RequestRide/bloc/ride_state.dart';
 import 'package:rideuser/core/colors.dart';
 
 
@@ -221,48 +221,6 @@ class VehicleCard extends StatelessWidget {
   }
 }
 
-
-
-// Widget buildLocationInputField({
-//   required BuildContext context,
-//   required String label,
-//   required TextEditingController controller,
-//   required String hint,
-// }) {
-//   final screenWidth = MediaQuery.of(context).size.width;
-
-//   return Column(
-//     crossAxisAlignment: CrossAxisAlignment.start,
-//     children: [
-//       Text(
-//         label,
-//         style: TextStyle(
-//           fontSize: screenWidth * 0.05, // Adjust font size based on screen width
-//           fontWeight: FontWeight.w600,
-//           color: ThemeColors.darkGrey,
-//         ),
-//       ),
-//       const SizedBox(height: 10),
-//       TextField(
-//         controller: controller,
-//         style: const TextStyle(color: ThemeColors.darkGrey), // Set text color to white
-//         decoration: InputDecoration(
-//           hintText: hint,
-//           hintStyle: const TextStyle(color: ThemeColors.grey),
-//           border: OutlineInputBorder(
-//             borderSide: const BorderSide(color: ThemeColors.darkGrey,),
-//             borderRadius: BorderRadius.circular(20),
-//           ),
-//         ),
-//       ),
-//     ],
-//   );
-// }
-
-
-
-
-
 Widget buildLocationInputField({
   required BuildContext context,
   required String label,
@@ -271,7 +229,7 @@ Widget buildLocationInputField({
   required Function(double, double, String) onLocationSelected,
 }) {
   final screenWidth = MediaQuery.of(context).size.width;
-  Timer? _debounce;
+  Timer? debounce;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,10 +263,10 @@ Widget buildLocationInputField({
           ),
         ),
         onChanged: (text) {
-          if (_debounce?.isActive ?? false) _debounce!.cancel();
+          if (debounce?.isActive ?? false) debounce!.cancel();
 
           if (text.isNotEmpty) {
-            _debounce = Timer(const Duration(seconds: 3), () {
+            debounce = Timer(const Duration(seconds: 3), () {
               BlocProvider.of<RideBloc>(context).add(FetchSuggestions(text));
             });
           }
@@ -353,10 +311,10 @@ Widget buildLocationInputField({
                 children: [
                   const Icon(Icons.wifi_off, size: 80, color: Colors.red),
                   const SizedBox(height: 20),
-                  Text(
+                  const Text(
                     'An error occurred',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 18, color: Colors.grey),
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
@@ -628,7 +586,6 @@ class LoadingScreenContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          // Loading Animation with a Custom Effect
           TweenAnimationBuilder<double>(
             duration: const Duration(seconds: 2),
             tween: Tween<double>(begin: 0.8, end: 1.2),
