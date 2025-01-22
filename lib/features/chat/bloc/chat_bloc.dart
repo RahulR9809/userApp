@@ -72,15 +72,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         userId: userId,
       );
 
-      // Add the sent message immediately without triggering full rebuild
       _sentMessages.add({
         'message': event.message,
         'isSender': true,
         'time': time,
       });
 
-      // Only emit updated sent messages to avoid full UI rebuild
-      // emit(ChatSentMessagesUpdated(messages: _sentMessages));
+
     } else {
       emit(ChatError(message: 'User ID not found'));
     }
@@ -90,14 +88,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       MessageReceived event, Emitter<ChatState> emit) async {
     String? userId = await _getUserId();
 
-    // Add the received message
     _receivedMessages.add({
       'message': event.message,
       'isSender': event.senderid == userId,
       'time': event.time,
     });
 
-    // Emit the updated state with received messages
     emit(ChatReceivedMessagesUpdated(messages: _receivedMessages));
   }
 
@@ -118,21 +114,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       if (kDebugMode) {
         print(' the getted message from database:$messages');
       }
-      String? driverId = await _getDriverId();
+    String? userId = await _getUserId();
 
       _receivedMessages = messages.map((e) {
         final timestamp = e['createdAt'] != null
-            // ? DateTime.parse(e['createdAt'])
 
             ? DateTime.parse(e['createdAt'])
                 .toUtc()
-                .add(const Duration(hours: 5, minutes: 30)) // Convert UTC to IST
+                .add(const Duration(hours: 5, minutes: 30)) 
 
-            : DateTime.now(); // Use current time if timestamp is null
+            : DateTime.now(); 
 
         return {
           'message': e['message'],
-          'isSender': e['senderId'] == driverId,
+          'isSender': e['senderId'] == userId,
           'time': _formatTime(timestamp),
         };
       }).toList();
